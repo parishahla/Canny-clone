@@ -1,0 +1,23 @@
+import express from "express";
+import {
+  getAllFeedback,
+  sendFeedback,
+  getFeedback,
+  updateFeedback,
+  deleteFeedback,
+  sendUpvote,
+  sendDownvote,
+} from "../controllers/feedback.controller.js";
+import { protect } from "../controllers/auth.controller.js";
+const router = express.Router();
+
+router.route("/").get(getAllFeedback).post(protect, sendFeedback);
+router
+  .route("/:id")
+  .get(getFeedback)
+  .patch(protect, updateFeedback)
+  .delete(protect, deleteFeedback);
+router.route("/:id/upvote").patch(protect, sendUpvote);
+router.route("/:id/downvote").patch(protect, sendDownvote);
+
+export default router;
