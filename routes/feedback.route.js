@@ -21,5 +21,4 @@ router
 router.route("/:id/upvote").patch(protect, sendUpvote);
 router.route("/:id/downvote").patch(protect, sendDownvote);
 
-
 export default router;
