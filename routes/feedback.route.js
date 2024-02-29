@@ -5,10 +5,10 @@ import {
   getFeedback,
   updateFeedback,
   deleteFeedback,
-  sendUpvote,
-  sendDownvote,
 } from "../controllers/feedback.controller.js";
 import { protect } from "../controllers/auth.controller.js";
+import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
+
 const router = express.Router();
 
 router.route("/").get(getAllFeedback).post(protect, sendFeedback);
@@ -17,7 +17,9 @@ router
   .get(getFeedback)
   .patch(protect, updateFeedback)
   .delete(protect, deleteFeedback);
+
 router.route("/:id/upvote").patch(protect, sendUpvote);
 router.route("/:id/downvote").patch(protect, sendDownvote);
+
 
 export default router;

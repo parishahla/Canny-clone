@@ -1,10 +1,6 @@
 import Feedback from "../model/feedback.model.js";
 import errorHandler from "../utils/error.js";
 import AppError from "../utils/appError.js";
-import User from "../model/user.model.js";
-import Vote from "../model/vote.model";
-import { Jwt } from "jsonwebtoken";
-import { promisify } from "util";
 
 //* feedback routes
 export const getAllFeedback = async (req, res, next) => {
@@ -70,44 +66,6 @@ export const deleteFeedback = async (req, res, next) => {
       return next(errorHandler(404, "No feedback found with this ID"));
     }
     res.status(200).json("Feedback has been deleted!");
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const sendUpvote = async (req, res, next) => {
-  try {
-    // const upvotedFeedback = await Feedback.findByIdAndUpdate(
-    //   req.params.id,
-    //   { $inc: { vote: 1 } },
-    //   {
-    //     new: true,
-    //     runValidators: true,
-    //   },
-    // );
-    // // { $set: { upvoters: (req.user._id), { $inc: { vote: 1 } }
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-
-    res.status(201).json(upvotedFeedback);
-  } catch (error) {
-    next(error);
-  }
-};
-
-//! How to sppress downvote, when less than 0
-export const sendDownvote = async (req, res, next) => {
-  try {
-    // const downvotedFeedback = await Feedback.findByIdAndUpdate(
-    //   req.params.id,
-    //   { $inc: { vote: -1 } },
-    //   {
-    //     new: true,
-    //   },
-    // );
-    // const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-    // res.status(201).json(downvotedFeedback);
   } catch (error) {
     next(error);
   }

@@ -31,7 +31,6 @@ app.use(errorController);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.headers);
   next();
 });
 
@@ -41,6 +40,7 @@ app.use("/api/v1/feedback", feedbackRouterV1);
 
 app.use("/api/users", userRouter);
 app.use("/api/v1/users", userRouterV1);
+
 
 app.all("*", (req, res, next) => {
   const err = new Error(`Can not find ${req.originalUrl} on this server`);
