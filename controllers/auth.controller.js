@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { promisify } from "util";
 import User from "../model/user.model.js";
 import AppError from "../utils/appError.js";
+import logger from "../logger/logger.js";
 
 const signToken = (id) => {
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -76,10 +77,7 @@ export const protect = async (req, res, next) => {
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return next(
-        new AppError(
-          'The user belonging to this token no longer exists.',
-          401
-        )
+        new AppError("The user belonging to this token no longer exists.", 401)
       );
     }
 
@@ -94,10 +92,9 @@ export const protect = async (req, res, next) => {
 
 export const validateEmail = (req, res, next) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
   if (!emailRegex.test(req.body.email)) {
-    return res.status(400).send('Invalid email format');
+    logger.error("Events Error: Unauthenticated user");
+    return res.status(400).send("Invalid email format");
   }
-
   next();
 };

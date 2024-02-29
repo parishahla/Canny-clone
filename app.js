@@ -2,25 +2,25 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
-
 import feedbackRouter from "./routes/feedback.route.js";
 import feedbackRouterV1 from "./routes/feedback.v1.route.js";
 import userRouter from "./routes/user.route.js";
 import userRouterV1 from "./routes/user.v1.route.js";
 import errorController from "./controllers/error.controller.js";
+import logger from "./logger/logger.js";
 
 dotenv.config();
 mongoose
   .connect(process.env.MONGO)
   .then(() => {
-    console.log("Connected to MongoDB");
+    logger.info("Connected to MongoDB");
   })
   .catch((err) => console.log(err));
 
 // 1) Middlewares
 const app = express();
 
-//* Logger
+//* Logger( Morgan )
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
@@ -31,7 +31,6 @@ app.use(errorController);
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.headers);
   next();
 });
 
@@ -54,6 +53,5 @@ app.all("*", (req, res, next) => {
 // 4) Start server
 const port = 2000;
 app.listen(port, (req, res) => {
-  console.log(`listening on port ${port}`);
+  logger.info(`listening on port ${port}`);
 });
-

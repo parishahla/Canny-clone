@@ -1,18 +1,17 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-import User from "./user.model";
-import Feedback from "./feedback.model";
 
-const voteSchema = new mongoose.Schema({
+const voteSchema = new mongoose.Schema(
+    {
     feedbackId: {
         type: Schema.Types.ObjectId,
-        ref: Feedback,
+            ref: "Feedback",
     },
-    userId: {
+        upvotedBy: {
         type: Schema.Types.ObjectId,
-        ref: User,
-    },
-    upvoteTime: Date.now(), 
+        ref: "User",
+        },
 });
 
 const Vote = mongoose.model("Vote", voteSchema);
+export default Vote;

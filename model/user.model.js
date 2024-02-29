@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-// import isEmail from "validator";
-import bcryptjs from "bcryptjs";
+import bcrypt from "bcrypt";
+
+const saltRounds = 12; // How CPU intensive
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,7 +30,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please provide a password"],
       minlength: 8,
       trim: true,
-      select: false
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -49,7 +50,7 @@ userSchema.pre("save", async function (next) {
   // Gaurd clause - only runs when password is modified
   if (!this.isModified("password")) return next();
 
-  this.password = await bcryptjs.hash(this.password, 12); // 12 : How much CPU intensive it is
+  this.password = await bcrypt.hash(this.password, saltRounds);
 
   // No longer needed
   this.passwordConfirm = undefined;
@@ -60,7 +61,7 @@ userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword,
 ) {
-  return await bcryptjs.compare(candidatePassword, userPassword);
+  return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 const User = mongoose.model("User", userSchema);
