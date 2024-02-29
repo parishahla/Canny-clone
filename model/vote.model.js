@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Schema from "mongoose";
+import { Schema } from "mongoose";
 
 const voteSchema = new mongoose.Schema(
     {
@@ -7,7 +7,7 @@ const voteSchema = new mongoose.Schema(
         type: Schema.Types.ObjectId,
             ref: "Feedback",
     },
-    userId: {
+        upvotedBy: {
         type: Schema.Types.ObjectId,
         ref: "User",
         },
