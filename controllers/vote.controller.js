@@ -20,7 +20,7 @@ export const sendUpvote = async (req, res, next) => {
     });
 
     if (user) {
-      return next(new AppError("You've already voted before.", 401));
+      return next(new AppError("You've already voted before.", 400));
     }
     newVote = await Vote.create({
       feedbackId: req.params.id,
@@ -38,19 +38,19 @@ export const sendDownvote = async (req, res, next) => {
     let downvote;
     const token = req.headers.authorization.split(" ")[1];
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
+ 
     const user = await Vote.findOne({
       feedbackId: req.params.id,
       upvotedBy: decoded.id,
     });
 
     if (user) {
-        downvote = await Vote.deleteOne({
+      downvote = await Vote.deleteOne({
         feedbackId: req.params.id,
         upvotedBy: decoded.id,
       });
     } else {
-      return next(new AppError("Can\'t take your vote twice!", 401));
+      return next(new AppError("Can't take your vote twice!", 400));
     }
 
     res.status(201).json(downvote);
