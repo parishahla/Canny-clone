@@ -35,7 +35,25 @@ export const sendUpvote = async (req, res, next) => {
 
 export const sendDownvote = async (req, res, next) => {
   try {
-    res.status(201).json();
+    let downvote;
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    const user = await Vote.findOne({
+      feedbackId: req.params.id,
+      upvotedBy: decoded.id,
+    });
+
+    if (user) {
+        downvote = await Vote.deleteOne({
+        feedbackId: req.params.id,
+        upvotedBy: decoded.id,
+      });
+    } else {
+      return next(new AppError("Can\'t take your vote twice!", 401));
+    }
+
+    res.status(201).json(downvote);
   } catch (error) {
     next(error);
   }
