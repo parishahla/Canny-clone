@@ -3,6 +3,7 @@ import { promisify } from "util";
 import User from "../model/user.model.js";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
+import { MongoClient } from "mongodb";
 
 const signToken = (id) => {
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -59,14 +60,17 @@ export const protect = async (req, res, next) => {
     let token;
     if (
       req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
+      req.headers.authorization.startsWith("Bearer")
     ) {
-      token = req.headers.authorization.split(' ')[1];
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (!token) {
       return next(
-        new AppError('You are not logged in! Please log in to get access.', 401)
+        new AppError(
+          "You are not logged in! Please log in to get access.",
+          401,
+        ),
       );
     }
 
@@ -77,13 +81,12 @@ export const protect = async (req, res, next) => {
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
       return next(
-        new AppError("The user belonging to this token no longer exists.", 401)
+        new AppError("The user belonging to this token no longer exists.", 401),
       );
     }
 
     // GRANT ACCESS
     req.user = currentUser;
-    console.log(req.user);
     next();
   } catch (err) {
     next(err);

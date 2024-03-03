@@ -5,13 +5,13 @@ import {
   getFeedback,
   updateFeedback,
   deleteFeedback,
-} from "../controllers/feedback.controller.js";
-import { protect } from "../controllers/auth.controller.js";
+} from "../controllers/feedback.v2.controller.js";
+import { protect } from "../controllers/auth.v2.controller.js";
 import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
 
 const router = express.Router();
 
-router.route("/").get(getAllFeedback).post(protect, sendFeedback);
+router.route("/").get(getAllFeedback).post(sendFeedback);
 router
   .route("/:id")
   .get(getFeedback)

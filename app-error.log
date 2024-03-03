@@ -1,2 +1,22 @@
 {"level":"error","message":"new"}
 {"level":"error","message":"Events Error: Unauthenticated user"}
+{"level":"error","message":"Events Error: Unauthenticated user"}
+{"level":"error","message":"client.db(...).collection(...).find(...).map(...).then is not a function"}
+{"level":"error","message":"client.db(...).collection(...).find(...).map(...).then is not a function"}
+{"level":"error","message":"AppError is not a constructor"}
+{"level":"error","message":"AppError is not a constructor"}
+{"level":"error","message":"user is not defined"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'Password')"}
+{"level":"error","message":"Cannot read properties of undefined (reading 'Password')"}
+{"level":"error","message":"getDb(...).db(...).collection(...).findOne(...).select is not a function"}
+{"level":"error","message":"data and hash arguments required"}
+{"level":"error","message":"Expected \"payload\" to be a plain object."}
