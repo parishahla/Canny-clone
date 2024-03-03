@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { initDb } from "./db.js";
 import feedbackRouterV1 from "./routes/feedback.v1.route.js";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
-// import feedbackRouterV3 from "./routes/feedback.v3.route.js";
+import feedbackRouterV3 from "./routes/feedback.v3.route.js";
 import userRouterV1 from "./routes/user.v1.route.js";
 import userRouterV2 from "./routes/user.v2.route.js";
 import userRouterV3 from "./routes/user.v3.route.js";
@@ -35,7 +35,7 @@ app.use(errorController);
 //* Mounting a new router on a route
 app.use("/api/v1/feedback", feedbackRouterV1);
 app.use("/api/v2/feedback", feedbackRouterV2);
-// app.use("/api/v3/feedback", feedbackRouterV3);
+app.use("/api/v3/feedback", feedbackRouterV3);
 
 app.use("/api/v1/users", userRouterV1);
 app.use("/api/v2/users", userRouterV2);

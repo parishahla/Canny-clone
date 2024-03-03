@@ -4,6 +4,7 @@ import { promisify } from "util";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import { getDb } from "../db.js";
+import { ObjectId } from "mongodb";
 
 // const signToken = (id) => {
 //   jwt.sign({ id }, process.env.JWT_SECRET);
@@ -115,11 +116,13 @@ export const protect = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
+
     const currentUser = await getDb()
       .db()
       .collection("users")
-      .findOne(decoded.id);
+      .findOne({ _id: new ObjectId(decoded.id) });
 
+    console.log(currentUser);
     if (!currentUser) {
       return next(
         new AppError("The user belonging to this token no longer exists.", 401),

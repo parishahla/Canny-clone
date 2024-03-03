@@ -20,3 +20,5 @@
 {"level":"error","message":"getDb(...).db(...).collection(...).findOne(...).select is not a function"}
 {"level":"error","message":"data and hash arguments required"}
 {"level":"error","message":"Expected \"payload\" to be a plain object."}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"shrek"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"shrek\" }"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"shrek"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"shrek\" }"}
