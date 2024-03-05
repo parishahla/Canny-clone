@@ -6,7 +6,7 @@ import { promisify } from "util";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import { getDb } from "../db.js";
-// import sendEmail from "../utils/email.js";
+import sendEmail from "../utils/email.js";
 
 // const signToken = (id) => {
 //   jwt.sign({ id }, process.env.JWT_SECRET);
@@ -29,12 +29,10 @@ async function correctPassword(candidatePassword, userPassword) {
 
 //   console.log({ resetToken }, passwordResetToken);
 
-
 //   return resetToken;
 // }
 
 const createSendToken = (user, statusCode, res) => {
-  s;
   const id = user._id;
   const token = jwt.sign({ id }, process.env.JWT_SECRET);
   // const cookieOptions = {
@@ -48,7 +46,7 @@ const createSendToken = (user, statusCode, res) => {
   // res.cookie("jwt", token, cookieOptions);
 
   // Remove password from output
-  user.password = undefined;
+  // user.password = undefined;
 
   res.status(statusCode).json({
     status: "success",
@@ -191,11 +189,11 @@ export const forgotPassword = async (req, res, next) => {
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));
   }
-  // console.log(user);
-  // 2) Generate the random reset token
 
+  // 2) Generate the random reset token
   const resetToken = crypto.randomBytes(32).toString("hex");
 
+  // encrypted
   const newPasswordResetToken = crypto
     .createHash("sha256")
     .update(resetToken)
@@ -203,7 +201,7 @@ export const forgotPassword = async (req, res, next) => {
 
   const newPasswordResetExpires = Date.now() + 10 * 60 * 1000;
 
-  const chu = await getDb()
+  await getDb()
     .db()
     .collection("users")
     .updateOne(
@@ -211,42 +209,34 @@ export const forgotPassword = async (req, res, next) => {
       {
         $set: {
           passwordResetToken: newPasswordResetToken,
-          passwordResetExpires: newPasswordResetExpires,
+          passwordResetExpires: new Date(newPasswordResetExpires),
         },
       },
     );
 
-  console.log(resetToken);
-  console.log(chu);
+  // //* 3) Send it to user's email
+  //   const resetURL = `${req.protocol}://${req.get("host"
+  // )}/api/v3/users/resetPassword/${resetToken}`;
+  // ${resetURL}
+    const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: .\nIf you didn't forget your password, please ignore this email!`;
 
-  // 3) Send it to user's email
-  // const resetURL = `${req.protocol}://${req.get(
-  //   "host",
-  // )}/api/v1/users/resetPassword/${resetToken}`;
+  try {
+    await sendEmail({ email: req.body.email,  message,});
 
-  // const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+    res.status(200).json({
+      status: "success",
+      message: "Token sent to email!",
+    });
+  } catch (err) {
+    // user.passwordResetToken = undefined;
+    // user.passwordResetExpires = undefined;
+    // await user.save({ validateBeforeSave: false });
 
-  // try {
-  //   await sendEmail({
-  //     email: user.email,
-  //     subject: "Your password reset token (valid for 10 min)",
-  //     message,
-  //   });
-
-  //   res.status(200).json({
-  //     status: "success",
-  //     message: "Token sent to email!",
-  //   });
-  // } catch (err) {
-  //   user.passwordResetToken = undefined;
-  //   user.passwordResetExpires = undefined;
-  //   await user.save({ validateBeforeSave: false });
-
-  //   return next(
-  //     new AppError("There was an error sending the email. Try again later!"),
-  //     500,
-  //   );
-  // }
+    return next(
+      new AppError("There was an error sending the email. Try again later!"),
+      500,
+    );
+  }
 };
 
 export const resetPassword = async (req, res, next) => {
@@ -261,24 +251,33 @@ export const resetPassword = async (req, res, next) => {
     .collection("users")
     .findOne({
       passwordResetToken: hashedToken,
-      passwordResetExpires: { $gt: Date.now() },
+      passwordResetExpires: { $gt: new Date(Date.now()) },
     });
 
   // 2) If token has not expired, and there is user, set the new password
   if (!user) {
     return next(new AppError("Token is invalid or has expired", 400));
   }
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-  await user.save();
 
-  // 3) Update changedPasswordAt property for the user
+  // 3) Update the user
+  await getDb()
+    .db()
+    .collection("users")
+    .updateOne(
+      { email: req.body.email },
+      {
+        $set: {
+          password: req.body.password,
+          passwordChangedAt: new Date(Date.now()),
+          passwordResetToken: undefined,
+          passwordResetExpires: undefined,
+        },
+      },
+    );
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
 };
-
+// passwordConfirm = req.body.passwordConfirm;
 export const updatePassword = async (req, res, next) => {
   // 1) Get user from collection
   const user = await getDb()

@@ -1,7 +1,37 @@
 import { ObjectId } from "mongodb";
+import multer from "multer";
 import { getDb } from "../db.js";
 import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
+
+//* image upload
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/users");
+  },
+  filename: (req, file, cb) => {
+    // user-id-timestamp.jpg -> unique name
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `user-${req.user._id}-${Date.now()}.${ext}}`);
+  },
+});
+
+// filter out the ones that are not images
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not an image", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+export const uploadUserPhoto = upload.single("photo");
+
 //* user handlers
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -71,6 +101,12 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
+  // req.user._id !== req.params.id
+  if (req.user._id.equals(req.params.id))
+    return new AppError("You can only update your own account");
+  // console.log(req.user, "its req user");
+  console.log(req.file);
+  console.log(req.body);
   try {
     const updatedUser = {
       username: req.body.username,

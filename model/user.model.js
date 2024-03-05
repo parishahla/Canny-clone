@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      // validate: [isEmail(), "Please provide a valid email"],
     },
     photo: {
       type: String,
