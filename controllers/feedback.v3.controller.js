@@ -99,3 +99,16 @@ export const deleteFeedback = async (req, res, next) => {
     next(error);
   }
 };
+
+export const countUpvote = async (req, res, next) => {
+  try {
+    const db = await getDb().db();
+    const upvotesCount = await db
+      .collection("feedbacks")
+      .countDocuments({ _id: new ObjectId(req.params.id) });
+    console.log(upvotesCount);
+    res.status(200).json(upvotesCount);
+  } catch (err) {
+    next(err);
+  }
+};

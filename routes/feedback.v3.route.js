@@ -5,6 +5,7 @@ import {
   getFeedback,
   updateFeedback,
   deleteFeedback,
+  countUpvote,
 } from "../controllers/feedback.v3.controller.js";
 import { protect } from "../controllers/auth.v3.controller.js";
 import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
@@ -20,5 +21,8 @@ router
 
 router.route("/:id/upvote").patch(protect, sendUpvote);
 router.route("/:id/downvote").patch(protect, sendDownvote);
+
+router.route("/:id/upvotesCount").get(protect, countUpvote);
+
 
 export default router;

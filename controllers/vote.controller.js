@@ -1,30 +1,27 @@
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
-import Vote from "../model/vote.model.js";
 import AppError from "../utils/appError.js";
+import { getDb } from "../db.js";
+import { ObjectId } from "mongodb";
 
 export const sendUpvote = async (req, res, next) => {
   try {
-    // get feedback id
-    // get user id => in the token
-    // check if the user has already voted before
-    // add a record to the vote model
-    // add vote score query to the Feedback vote property
-    let newVote;
     const token = req.headers.authorization.split(" ")[1];
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const user = await Vote.findOne({
-      feedbackId: req.params.id,
-      upvotedBy: decoded.id,
+    const db = getDb().db();
+    const voted = await db.collection("votes").findOne({
+      feedbackId: new ObjectId(req.params.id),
+      upvotedBy: new ObjectId(decoded.id),
     });
 
-    if (user) {
+    if (voted) {
       return next(new AppError("You've already voted before.", 400));
     }
-    newVote = await Vote.create({
-      feedbackId: req.params.id,
-      upvotedBy: decoded.id,
+
+    const newVote = await db.collection("votes").insertOne({
+      feedbackId: new ObjectId(req.params.id),
+      upvotedBy: new ObjectId(decoded.id),
     });
 
     res.status(201).json(newVote);
@@ -38,16 +35,17 @@ export const sendDownvote = async (req, res, next) => {
     let downvote;
     const token = req.headers.authorization.split(" ")[1];
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
- 
-    const user = await Vote.findOne({
-      feedbackId: req.params.id,
-      upvotedBy: decoded.id,
-    });
+    const db = getDb().db();
 
-    if (user) {
-      downvote = await Vote.deleteOne({
-        feedbackId: req.params.id,
-        upvotedBy: decoded.id,
+    const voted = await db.collection("votes").findOne({
+      feedbackId: new ObjectId(req.params.id),
+      upvotedBy: new ObjectId(decoded.id),
+    });
+    console.log(voted);
+    if (voted) {
+      downvote = await db.collection("votes").deleteOne({
+        feedbackId: new ObjectId(req.params.id),
+        upvotedBy: new ObjectId(decoded.id),
       });
     } else {
       return next(new AppError("Can't take your vote twice!", 400));

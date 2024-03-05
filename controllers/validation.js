@@ -1,8 +1,10 @@
 import { getDb } from "../db";
+import logger from "../logger/logger";
 
 // validationLevel = strict
 // collmod: adds validation to an existing documrent
 
+//* Modified the users collection
 getDb()
   .db()
   .runCommand({
@@ -31,5 +33,33 @@ getDb()
       },
     },
   })
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+  .then((res) => logger.info(res))
+  .catch((err) => logger.error(err));
+
+//* Modified the feedback collection
+getDb()
+  .db()
+  .runCommand({
+    collMod: "feedbacks",
+    validator: {
+      $jsonSchema: {
+        bsonType: "object",
+        required: ["title", "desc"],
+        properties: {
+          title: {
+            bsonType: "string",
+            minLength: 10,
+            description: "must be a string and is required",
+          },
+          desc: {
+            bsonType: "string",
+            minLength: 20,
+            description:
+              "must be a string of at least 20 characters, and is required",
+          },
+        },
+      },
+    },
+  })
+  .then((res) => logger.info(res))
+  .catch((err) => logger.error(err));
