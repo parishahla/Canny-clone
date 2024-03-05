@@ -15,38 +15,9 @@ import sendEmail from "../utils/email.js";
 async function correctPassword(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 }
-
-// async function createPasswordResetToken(
-//   passwordResetToken,
-//   passwordResetExpires,
-// ) {
-//   const resetToken = crypto.randomBytes(32).toString("hex");
-
-//   passwordResetToken = crypto
-//     .createHash("sha256")
-//     .update(resetToken)
-//     .digest("hex");
-
-//   console.log({ resetToken }, passwordResetToken);
-
-//   return resetToken;
-// }
-
 const createSendToken = (user, statusCode, res) => {
   const id = user._id;
   const token = jwt.sign({ id }, process.env.JWT_SECRET);
-  // const cookieOptions = {
-  //   expires: new Date(
-  //     Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
-  //   ),
-  //   httpOnly: true,
-  // };
-  // if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
-
-  // res.cookie("jwt", token, cookieOptions);
-
-  // Remove password from output
-  // user.password = undefined;
 
   res.status(statusCode).json({
     status: "success",
@@ -109,6 +80,7 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       return next(new AppError("Please provide email and password!", 400));
     }
+    
     // 2) Check if user exists && password is correct
     const user = await getDb()
       .db()
@@ -119,15 +91,15 @@ export const login = async (req, res, next) => {
       return next(new AppError("Incorrect email or password", 401));
     }
     const { _id } = user;
+
     // 3) If everything ok, send token to client
     const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
     res.status(200).json({
-      status: "youre logged in",
+      status: "You are logged in",
       token,
     });
-    // res.status(201).json({ message: "loggin u in" });
   } catch (err) {
     logger.error(err);
   }
@@ -158,7 +130,6 @@ export const protect = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
-
     const currentUser = await getDb()
       .db()
       .collection("users")
@@ -215,10 +186,7 @@ export const forgotPassword = async (req, res, next) => {
     );
 
   // //* 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get("host"
-  )}/api/v3/users/resetPassword/${resetToken}`;
-
-  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: .\nIf you didn't forget your password, please ignore this email!`;
+  const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:token please ignore this email!`;
 
   try {
     await sendEmail({
@@ -232,9 +200,7 @@ export const forgotPassword = async (req, res, next) => {
       message: "Token sent to email!",
     });
   } catch (err) {
-    // user.passwordResetToken = undefined;
-    // user.passwordResetExpires = undefined;
-    // await user.save({ validateBeforeSave: false });
+    //! delete the token and expiration
     return next(
       new AppError("There was an error sending the email. Try again later!"),
       500,
@@ -280,28 +246,4 @@ export const resetPassword = async (req, res, next) => {
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
 };
-// passwordConfirm = req.body.passwordConfirm;
-export const updatePassword = async (req, res, next) => {
-  // 1) Get user from collection
-  const user = await getDb()
-    .db()
-    .collection("users")
-    .findById(req.user.id)
-    .select("+password");
 
-  // 2) Check if POSTed current password is correct
-  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    return next(new AppError("Your current password is wrong.", 401));
-  }
-
-  // 3) If so, update password
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
-  // User.findByIdAndUpdate will NOT work as intended!
-
-  // 4) Log user in, send JWT
-  createSendToken(user, 200, res);
-};
-
-// .toLowerCase()

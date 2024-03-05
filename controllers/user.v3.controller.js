@@ -12,7 +12,7 @@ const multerStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     // user-id-timestamp.jpg -> unique name
     const ext = file.mimetype.split("/")[1];
-    cb(null, `user-${req.user._id}-${Date.now()}.${ext}}`);
+    cb(null, `user-${req.user._id}-${Date.now()}.${ext}`);
   },
 });
 
@@ -101,18 +101,12 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  // req.user._id !== req.params.id
-  if (req.user._id.equals(req.params.id))
-    return new AppError("You can only update your own account");
-  // console.log(req.user, "its req user");
-  console.log(req.file);
-  console.log(req.body);
   try {
     const updatedUser = {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
-      photo: req.body.photo,
+      photo: req.file.filename,
     };
     getDb()
       .db()

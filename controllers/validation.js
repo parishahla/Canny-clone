@@ -29,6 +29,9 @@ getDb()
             description:
               "must be a string of at least 8 characters, and is required",
           },
+          photo: {
+            bsonType: "string",
+          },
         },
       },
     },
