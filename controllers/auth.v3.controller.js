@@ -80,7 +80,6 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       return next(new AppError("Please provide email and password!", 400));
     }
-    
     // 2) Check if user exists && password is correct
     const user = await getDb()
       .db()
@@ -163,7 +162,7 @@ export const forgotPassword = async (req, res, next) => {
 
   // 2) Generate the random reset token
   const resetToken = crypto.randomBytes(32).toString("hex");
-
+  console.log("reset token", resetToken);
   // encrypted
   const newPasswordResetToken = crypto
     .createHash("sha256")
@@ -228,6 +227,9 @@ export const resetPassword = async (req, res, next) => {
     return next(new AppError("Token is invalid or has expired", 400));
   }
 
+  const hashedPW = await bcrypt.hash(req.body.password, 12);
+  console.log(hashedPW);
+
   // 3) Update the user
   await getDb()
     .db()
@@ -236,7 +238,7 @@ export const resetPassword = async (req, res, next) => {
       { email: req.body.email },
       {
         $set: {
-          password: req.body.password,
+          password: hashedPW,
           passwordChangedAt: new Date(Date.now()),
           passwordResetToken: undefined,
           passwordResetExpires: undefined,
@@ -246,4 +248,3 @@ export const resetPassword = async (req, res, next) => {
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
 };
-
