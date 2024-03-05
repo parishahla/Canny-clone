@@ -64,6 +64,9 @@ export const sendFeedback = async (req, res, next) => {
 };
 
 export const updateFeedback = async (req, res, next) => {
+  const paramId = new ObjectId(req.params.id);
+  if (req.user._id.toString() !== paramId.toString())
+    return next(new AppError("You can only update your own feedback"));
   try {
     const updatedFeedback = {
       title: req.body.title,
@@ -87,6 +90,9 @@ export const updateFeedback = async (req, res, next) => {
 };
 
 export const deleteFeedback = async (req, res, next) => {
+  const paramId = new ObjectId(req.params.id);
+  if (req.user._id.toString() !== paramId.toString())
+    return next(new AppError("You can only update your own feedback"));
   try {
     const db = await getDb().db();
     const result = await db
