@@ -32,21 +32,41 @@ const sendEmail = async (options) => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: process.env.MAIL_PORT,
+    tls: true,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASSWORD,
     },
   });
-
+  // console.log(process.env.MAIL_USER);
+  // console.log(process.env.MAIL_PASSWORD);
   // 2) Define the email options
-  const mailOptions = {
-    from: "P Sh <parnianshahla2004@gmail.com>",
-    to: options.email,
-    text: options.message,
-  };
-
+  // const mailOptions = {
+  //   from: "pari@e8i.ir",
+  //   to: options.email,
+  // };
   // 3) Actually send the email
-  transporter.sendMail({ mailOptions });
+  transporter
+    .sendMail({
+      from: "pari@e8i.ir",
+      to: options.email,
+      subject: options.subject,
+      text: options.message,
+    })
+    .then(() => console.log("OK, Email has been sent."))
+    .catch(console.error);
+
+  // from: 'Jonas Schmedtmann <hello@jonas.io>',
+  // to: options.email,
+  // subject: options.subject,
+  // text: options.message
+  // transporter
+  //   .sendMail({
+  //     from: "Pari parnianshahla2004@gmail.com>",
+  //     to: "to@example.com",
+  //   })
+  //   .then(() => console.log("OK, Email has been sent."))
+  //   .catch(console.error);
 };
 
 export default sendEmail;
