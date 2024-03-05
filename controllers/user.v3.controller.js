@@ -77,6 +77,7 @@ export const getUser = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
+
   try {
     const newUser = {
       username: req.body.username,
@@ -101,6 +102,10 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
+  const paramId = new ObjectId(req.params.id);
+  if (req.user._id.toString() !== paramId.toString())
+    return next(new AppError("You can only update your own account"));
+
   try {
     const updatedUser = {
       username: req.body.username,
@@ -130,6 +135,10 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
+  const paramId = new ObjectId(req.params.id);
+  if (req.user._id.toString() !== paramId.toString())
+    return next(new AppError("You can only update your own account"));
+
   try {
     getDb()
       .db()

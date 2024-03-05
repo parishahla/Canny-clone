@@ -126,7 +126,9 @@ export const protect = async (req, res, next) => {
     }
 
     // 2) Verification token
+    console.log("token", token);
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    console.log("decoded :::::", decoded);
 
     // 3) Check if user still exists
     const currentUser = await getDb()
@@ -134,6 +136,7 @@ export const protect = async (req, res, next) => {
       .collection("users")
       .findOne({ _id: new ObjectId(decoded.id) });
 
+    console.log("current user", currentUser);
     // console.log(currentUser);
     if (!currentUser) {
       return next(
@@ -143,6 +146,7 @@ export const protect = async (req, res, next) => {
 
     // GRANT ACCESS
     req.user = currentUser;
+    console.log("req.user", req.user);
     next();
   } catch (err) {
     next(err);
@@ -162,7 +166,7 @@ export const forgotPassword = async (req, res, next) => {
 
   // 2) Generate the random reset token
   const resetToken = crypto.randomBytes(32).toString("hex");
-  console.log("reset token", resetToken);
+
   // encrypted
   const newPasswordResetToken = crypto
     .createHash("sha256")
@@ -199,7 +203,19 @@ export const forgotPassword = async (req, res, next) => {
       message: "Token sent to email!",
     });
   } catch (err) {
-    //! delete the token and expiration
+    // delete the token and expiration
+    await getDb()
+      .db()
+      .collection("users")
+      .updateOne(
+        { email: req.body.email },
+        {
+          $set: {
+            passwordResetToken: undefined,
+            passwordResetExpires: undefined,
+          },
+        },
+      );
     return next(
       new AppError("There was an error sending the email. Try again later!"),
       500,
@@ -228,7 +244,6 @@ export const resetPassword = async (req, res, next) => {
   }
 
   const hashedPW = await bcrypt.hash(req.body.password, 12);
-  console.log(hashedPW);
 
   // 3) Update the user
   await getDb()
