@@ -12,11 +12,12 @@ import {
   protect,
   validateEmail,
 } from "../controllers/auth.v2.controller.js";
+import Validate from "../controllers/validation.js";
 
 const router = express.Router();
 
 //* user routes
-router.post("/signup", validateEmail, signup);
+router.post("/signup", Validate.validateUserInput, signup);
 router.post("/signin", protect, login);
 
 router.route("/").get(protect, getAllUsers).post(createUser);

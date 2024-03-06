@@ -1,97 +1,35 @@
-import { getDb } from "../db";
-import logger from "../logger/logger";
+// This piece of code is supposed to work with api v2.0.0 -
+class Validate {
+  static validateUserInput(req, res, next) {
+    let { username, email, password } = req.body;
 
-// validationLevel = strict
-// collmod: adds validation to an existing documrent
+    // Check if all required fields are present
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
-//* Modified the users collection
-getDb()
-  .db()
-  .runCommand({
-    collMod: "users",
-    validator: {
-      $jsonSchema: {
-        bsonType: "object",
-        required: ["username", "email", "password"],
-        properties: {
-          username: {
-            bsonType: "string",
-            description: "must be a string and is required",
-          },
-          email: {
-            bsonType: "string",
-            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-            description: "must be a valid email address",
-          },
-          password: {
-            bsonType: "string",
-            minLength: 8,
-            description:
-              "must be a string of at least 8 characters, and is required",
-          },
-          photo: {
-            bsonType: "string",
-          },
-        },
-      },
-    },
-  })
-  .then((res) => logger.info(res))
-  .catch((err) => logger.error(err));
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
 
-const feedbackSchema = {
-  $jsonSchema: {
-    bsonType: "object",
-    required: ["title", "desc"],
-    properties: {
-      title: {
-        bsonType: "string",
-        minLength: 10,
-        description: "must be a string and is required",
-      },
-      desc: {
-        bsonType: "string",
-        minLength: 20,
-        description:
-          "must be a string of at least 20 characters, and is required",
-      },
-    },
-  },
-};
-//* Modified the feedback collection
-getDb()
-  .db()
-  .runCommand({
-    collMod: "feedbacks",
-    validator: feedbackSchema,
-    validationLevel: "strict",
-  })
-  .then((res) => logger.info(res))
-  .catch((err) => logger.error(err));
+    // Check if username is at least 3 characters long
+    if (username.length < 5) {
+      return res
+        .status(400)
+        .json({ error: "Username must be at least 5 characters long" });
+    }
 
-//   // Define the JSON schema for validation
-// const schema = {
-//   $jsonSchema: {
-//     bsonType: 'object',
-//     required: ['name', 'age'], // Example required fields
-//     properties: {
-//       name: {
-//         bsonType: 'string',
-//         description: 'must be a string and is required'
-//       },
-//       age: {
-//         bsonType: 'int',
-//         minimum: 0,
-//         description: 'must be an integer and is required'
-//       },
-//       // Add more properties and validation rules as needed
-//     }
-//   }
-// };
+    // Check if password is at least 6 characters long
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 8 characters long" });
+    }
+    // If there's no error, execute the "next" middleware
+    next();
+  }
+}
 
-// // Update the collection's options with validation rules using collMod
-// db.runCommand({
-//   collMod: 'your-collection-name',
-//   validator: schema,
-//   validationLevel: 'strict' // 'strict' enforces validation rules for all inserts and updates
-// });
+export default Validate;
