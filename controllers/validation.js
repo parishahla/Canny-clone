@@ -60,6 +60,9 @@ getDb()
             description:
               "must be a string of at least 20 characters, and is required",
           },
+          photo: {
+            bsonType: "string",
+          },
         },
       },
     },
