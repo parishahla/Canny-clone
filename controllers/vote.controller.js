@@ -11,10 +11,12 @@ export const sendUpvote = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    const db = getDb().db();
+    const db = await getDb().db();
     const voted = await db.collection("votes").findOne({
-      feedbackId: new ObjectId(req.params.id),
-      upvotedBy: new ObjectId(decoded.id),
+      $and: [
+        { feedbackId: new ObjectId(req.params.id) },
+        { upvotedBy: new ObjectId(decoded._id) },
+      ],
     });
 
     if (voted) {
@@ -23,7 +25,7 @@ export const sendUpvote = async (req, res, next) => {
 
     const newVote = await db.collection("votes").insertOne({
       feedbackId: new ObjectId(req.params.id),
-      upvotedBy: new ObjectId(decoded.id),
+      upvotedBy: new ObjectId(decoded._id),
     });
 
     res.status(201).json(newVote);
@@ -35,11 +37,11 @@ export const sendUpvote = async (req, res, next) => {
 
 export const sendDownvote = async (req, res, next) => {
   try {
-
     let downvote;
     const token = req.headers.authorization.split(" ")[1];
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
+    console.log("decoded during send downvote");
+    console.log(decoded._id);
     const db = getDb().db();
     const voted = await db.collection("votes").findOne({
       $and: [
