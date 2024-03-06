@@ -1,5 +1,6 @@
 import User from "../model/user.model.js";
 import errorHandler from "../utils/error.js";
+import Validate from "./validation.js";
 
 //* user handlers
 export const getAllUsers = async (req, res, next) => {
@@ -25,6 +26,11 @@ export const getUser = async (req, res, next) => {
 
 export const createUser = async (req, res, next) => {
   try {
+    const validate = new Validate(User);
+    const thereISEmail = await validate.findEmail(req.body.email);
+    if (thereISEmail) {
+      return res.status(400).json({ error: "Email already exists!" });
+    }
     const newUser = await User.create(req.body);
 
     res.status(201).json(newUser);

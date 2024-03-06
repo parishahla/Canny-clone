@@ -1,5 +1,14 @@
+import User from "../model/user.model.js";
+
 // This piece of code is supposed to work with api v2.0.0 -
 class Validate {
+  constructor(model) {
+    this.model = model;
+  }
+  async findEmail(email) {
+    return await this.model.findOne({ email: email });
+  }
+
   static validateUserInput(req, res, next) {
     let { username, email, password } = req.body;
 

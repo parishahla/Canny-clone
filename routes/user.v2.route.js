@@ -15,7 +15,10 @@ const router = express.Router();
 router.post("/signup", Validate.validateUserInput, signup);
 router.post("/signin", login);
 
-router.route("/").get(protect, getAllUsers).post(protect, createUser);
+router
+  .route("/")
+  .get(protect, getAllUsers)
+  .post(protect, Validate.validateUserInput, createUser);
 router
   .route("/:id")
   .get(protect, getUser)
