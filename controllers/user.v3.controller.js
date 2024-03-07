@@ -77,19 +77,20 @@ export const getUser = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
+
   try {
     const newUser = {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
-      photo: req.file.filename,
+      photo: req.body.photo,
     };
     getDb()
       .db()
       .collection("users")
       .insertOne(newUser)
       .then((result) => {
-        res.status(201).json({ message: "User added", result });
+        res.status(201).json({ message: "User added" });
       })
       .catch((err) => {
         logger.error(err);
@@ -126,12 +127,7 @@ export const updateUser = async (req, res, next) => {
       })
       .catch((err) => {
         logger.error(err);
-        next(
-          new AppError(
-            "An error occurred, check for the right credentials",
-            500,
-          ),
-        );
+        next(new AppError("An error occurred", 500));
       });
   } catch (error) {
     next(error);
@@ -141,7 +137,7 @@ export const updateUser = async (req, res, next) => {
 export const deleteUser = async (req, res, next) => {
   const paramId = new ObjectId(req.params.id);
   if (req.user._id.toString() !== paramId.toString())
-    return next(new AppError("You can only delete your own account"));
+    return next(new AppError("You can only update your own account"));
 
   try {
     getDb()
@@ -153,12 +149,7 @@ export const deleteUser = async (req, res, next) => {
       })
       .catch((err) => {
         logger.error(err);
-        next(
-          new AppError(
-            "An error occurred, check for the right credentials",
-            500,
-          ),
-        );
+        next(new AppError("An error occurred", 500));
       });
   } catch (error) {
     next(error);

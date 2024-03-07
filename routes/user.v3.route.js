@@ -6,7 +6,7 @@ import {
   getUser,
   updateUser,
   deleteUser,
-  uploadUserPhoto,
+  uploadUserPhoto
 } from "../controllers/user.v3.controller.js";
 import {
   signup,
@@ -25,10 +25,7 @@ router.post("/signin", login);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 
-router
-  .route("/")
-  .get(protect, getAllUsers)
-  .post(protect, uploadUserPhoto, createUser);
+router.route("/").get(protect, getAllUsers).post(protect, createUser);
 router
   .route("/:id")
   .get(protect, getUser)

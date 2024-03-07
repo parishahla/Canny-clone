@@ -6,26 +6,23 @@ import {
   updateFeedback,
   deleteFeedback,
   countUpvote,
-  uploadFeedbackPhoto,
 } from "../controllers/feedback.v3.controller.js";
 import { protect } from "../controllers/auth.v3.controller.js";
 import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(getAllFeedback)
-  .post(protect, uploadFeedbackPhoto, sendFeedback);
+router.route("/").get(getAllFeedback).post(protect, sendFeedback);
 router
   .route("/:id")
   .get(getFeedback)
-  .patch(protect, uploadFeedbackPhoto, updateFeedback)
+  .patch(protect, updateFeedback)
   .delete(protect, deleteFeedback);
 
 router.route("/:id/upvote").patch(protect, sendUpvote);
 router.route("/:id/downvote").patch(protect, sendDownvote);
 
 router.route("/:id/upvotesCount").get(protect, countUpvote);
+
 
 export default router;

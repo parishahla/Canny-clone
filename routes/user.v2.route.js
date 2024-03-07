@@ -6,20 +6,19 @@ import {
   updateUser,
   deleteUser,
 } from "../controllers/user.v2.controller.js";
-import {
-  signup,
-  login,
-  protect,
-  validateEmail,
-} from "../controllers/auth.v2.controller.js";
+import { signup, login, protect } from "../controllers/auth.v2.controller.js";
+import Validate from "../controllers/validation.js";
 
 const router = express.Router();
 
 //* user routes
-router.post("/signup", validateEmail, signup);
-router.post("/signin", protect, login);
+router.post("/signup", Validate.validateUserInput, signup);
+router.post("/signin", login);
 
-router.route("/").get(protect, getAllUsers).post(createUser);
+router
+  .route("/")
+  .get(protect, getAllUsers)
+  .post(protect, Validate.validateUserInput, createUser);
 router
   .route("/:id")
   .get(protect, getUser)
