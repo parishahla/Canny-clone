@@ -60,6 +60,27 @@
 //   return resetToken;
 // };
 
-// const User = mongoose.model('User', userSchema);
+// username = username.trim().toLowerCase();
+// email = email.trim().toLowerCase();
 
-// module.exports = User;
+// import bcrypt from "bcrypt";
+
+// const saltRounds = 12; // How CPU intensive
+
+// userSchema.pre("save", async function (next) {
+//   // Gaurd clause - only runs when password is modified
+//   if (!this.isModified("password")) return next();
+
+//   this.password = await bcrypt.hash(this.password, saltRounds);
+
+//   // No longer needed
+//   this.passwordConfirm = undefined;
+
+//   next();
+// });
+// userSchema.methods.correctPassword = async function (
+//   candidatePassword,
+//   userPassword,
+// ) {
+//   return await bcrypt.compare(candidatePassword, userPassword);
+// };
