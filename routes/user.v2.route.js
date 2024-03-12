@@ -41,8 +41,6 @@ class Router {
   patch(path, handler) {
     this.router.patch(path, handler);
   }
-
- 
 }
 
 const routerInstance = new Router();
