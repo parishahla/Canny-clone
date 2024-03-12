@@ -1,5 +1,5 @@
 import express from "express";
-// import mongoose from "mongoose";
+import mongoose from "mongoose";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { initDb } from "./db.js";
@@ -13,12 +13,12 @@ import errorController from "./controllers/error.controller.js";
 import logger from "./logger/logger.js";
 
 dotenv.config();
-// mongoose
-//   .connect(process.env.MONGO)
-//   .then(() => {
-//     logger.info("Connected to MongoDB - API - 2.0.0 - Mongoose ");
-//   })
-//   .catch((err) => logger.error(err));
+mongoose
+  .connect(process.env.MONGO)
+  .then(() => {
+    logger.info("Connected to MongoDB - API - 2.0.0 - Mongoose ");
+  })
+  .catch((err) => logger.error(err));
 
 // 1) Middlewares
 const app = express();
