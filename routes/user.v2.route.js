@@ -14,22 +14,51 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
+import router from "./feedback.v2.route.js";
 // import Validate from "../controllers/validation.js";
 
-const router = express.Router();
+class Router {
+  constructor() {
+    this.router = express.Router();
+  }
 
-//* user routes
-router.post("/signup", uploadUserPhoto, signup);
-router.post("/signin", login);
+  get(path, handler) {
+    this.router.get(path, handler);
+  }
 
-router.post("/forgotPassword", forgotPassword);
-router.patch("/resetPassword/:token", resetPassword);
+  post(path, handler) {
+    this.router.post(path, handler);
+  }
 
-router.route("/").get(protect, getAllUsers).post(protect, createUser);
-router
-  .route("/:id")
-  .get(protect, getUser)
-  .patch(protect, updateUser)
-  .delete(protect, deleteUser);
+  put(path, handler) {
+    this.router.put(path, handler);
+  }
 
-export default router;
+  delete(path, handler) {
+    this.router.delete(path, handler);
+  }
+
+  patch(path, handler) {
+    this.router.patch(path, handler);
+  }
+
+ 
+}
+
+const routerInstance = new Router();
+
+routerInstance.post("/signup", signup.bind(this));
+routerInstance.post("/signin", login);
+
+routerInstance.post("/forgotPassword", forgotPassword);
+routerInstance.patch("/resetPassword/:token", resetPassword);
+
+// routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
+// routerInstance
+//   .route("/:id")
+//   .get(protect, getUser)
+//   .patch(protect, updateUser)
+//   .delete(protect, deleteUser);
+
+export default routerInstance;
+// export default Router;
