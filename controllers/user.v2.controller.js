@@ -1,5 +1,5 @@
 import multer from "multer";
-import userValidation from "./validation.js";
+// import userValidation from "./validation.js";
 import UserRepository from "../repositories/user.repo.js";
 import errorHandler from "../utils/error.js";
 import logger from "../logger/logger.js";
@@ -33,61 +33,31 @@ const upload = multer({
 
 export const uploadUserPhoto = upload.single("photo");
 
-async function validateInput(userData) {
-  // Validate user data using Joi schema
-  const { error } = userValidation.validate(userData);
-  if (error) {
-    logger.error(error.details[0].message);
-    return new AppError(error.details[0].message, 401);
-  }
-}
-
-async function checkUnique(userData) {
-  const userRepo = new UserRepository();
-
-  // Validate if the username and email are already in use
-  const existingUsername = await userRepo.getUserByUsername(userData.username);
-  if (existingUsername) {
-    return new AppError("Username already in use", 401);
-  }
-
-  const existingEmail = await userRepo.getUserByEmail(userData.email);
-  if (existingEmail) {
-    return new AppError("Email already in use", 401);
-  }
-
-  return true;
-}
-
-// class UserController {
-
-//   constructor() {
-//     this.userRepository = new UserRepository();
-//   }
-
-//   async createUser(userData) {
-//     await validateInput(userData);
-//     await checkUnique(userData);
-
-//     // Create the user
-//     return this.userRepository.createUser(userData);
-//   }
-
-//   async getUser(userId) {
-//     return this.userRepository.getUserById(userId);
-//   }
-
-//   async updateUser(userId, userData) {
-//     return this.userRepository.updateUser(userId, userData);
-//   }
-
-//   async deleteUser(userId) {
-//     return this.userRepository.deleteUser(userId);
+// async function validateInput(userData) {
+//   // Validate user data using Joi schema
+//   const { error } = userValidation.validate(userData);
+//   if (error) {
+//     logger.error(error.details[0].message);
+//     return new AppError(error.details[0].message, 401);
 //   }
 // }
 
-// export default UserController;
-// * user handlers
+// async function checkUnique(userData) {
+//   const userRepo = new UserRepository();
+
+//   // Validate if the username and email are already in use
+//   const existingUsername = await userRepo.getUserByUsername(userData.username);
+//   if (existingUsername) {
+//     return new AppError("Username already in use", 401);
+//   }
+
+//   const existingEmail = await userRepo.getUserByEmail(userData.email);
+//   if (existingEmail) {
+//     return new AppError("Email already in use", 401);
+//   }
+
+//   return true;
+// }
 
 export const getAllUsers = async (req, res, next) => {
   const userRepo = new UserRepository();
@@ -108,6 +78,7 @@ export const getUser = async (req, res, next) => {
 
     const user = await userRepo.getUserById(req.params.id);
 
+    //! handle the wrong id in a another way
     if (!user) return next(errorHandler(404, "User not found!"));
 
     const { password, ...rest } = user._doc;

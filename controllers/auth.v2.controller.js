@@ -71,14 +71,13 @@ export const signup = async (req, res, next) => {
       password: hashedPW,
       photo: req.file.filename,
     };
-
+    console.log(newUser)
     await userRepo.createUser(newUser);
-
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    res.status(201).json({ token, data: { newUser } });
+    return res.status(201).json({ token, data: { newUser } });
   } catch (error) {
     next(error);
   }
@@ -88,6 +87,7 @@ export const login = async (req, res, next) => {
   const userRepo = new UserRepository();
 
   const { email, password } = req.body;
+  console.log(email, password);
   //1- Check if email n pass exist
   if (!email || !password) {
     return next(new AppError("Please provide email and password!", 400));
@@ -159,6 +159,7 @@ export const protect = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   // 1) Get user based on POSTed email
   const { email } = req.body;
+  console.log(email)
   const user = await UserRepository.getUserById({ email });
 
   if (!user) {

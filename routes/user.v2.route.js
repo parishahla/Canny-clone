@@ -14,7 +14,7 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import router from "./feedback.v2.route.js";
+
 // import Validate from "../controllers/validation.js";
 
 class Router {
@@ -41,14 +41,22 @@ class Router {
   patch(path, handler) {
     this.router.patch(path, handler);
   }
+
+  getRouter() {
+    return this.router;
+  }
 }
 
 const routerInstance = new Router();
 
-routerInstance.post("/signup", signup.bind(this));
+function logIt() {
+  console.log("im being logged");
+}
+
+routerInstance.post("/signup", logIt, signup, logIt);
 routerInstance.post("/signin", login);
 
-routerInstance.post("/forgotPassword", forgotPassword);
+routerInstance.post("/forgotPassword", logIt, forgotPassword);
 routerInstance.patch("/resetPassword/:token", resetPassword);
 
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);

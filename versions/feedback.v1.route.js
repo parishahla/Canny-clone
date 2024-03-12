@@ -7,7 +7,7 @@ import {
   deleteFeedback,
   sendUpvote,
   sendDownvote,
-} from "../versions/feedback.v1.controller.js";
+} from "./feedback.v1.controller.js";
 
 const router = express.Router();
 
