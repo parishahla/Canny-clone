@@ -4,7 +4,7 @@ import { getDb } from "../db.js";
 import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
 
-//* image upload
+// //* image upload
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/img/users");

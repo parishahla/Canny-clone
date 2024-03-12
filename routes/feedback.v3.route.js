@@ -7,8 +7,8 @@ import {
   deleteFeedback,
   countUpvote,
   uploadFeedbackPhoto,
-} from "./feedback.v3.controller.js";
-import { protect } from "./auth.v3.controller.js";
+} from "../versions/feedback.v3.controller.js";
+import { protect } from "../controllers/auth.v3.controller.js";
 import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
 
 const router = express.Router();

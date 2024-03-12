@@ -7,14 +7,14 @@ import {
   updateUser,
   deleteUser,
   uploadUserPhoto,
-} from "./user.v3.controller.js";
+} from "../versions/user.v3.controller.js";
 import {
   signup,
   login,
   protect,
   forgotPassword,
   resetPassword,
-} from "./auth.v3.controller.js";
+} from "../controllers/auth.v3.controller.js";
 
 const router = express.Router();
 

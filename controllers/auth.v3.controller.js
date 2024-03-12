@@ -15,6 +15,9 @@ import sendEmail from "../utils/email.js";
 async function correctPassword(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 }
+function createHash(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
 const createSendToken = (user, statusCode, res) => {
   const id = user._id;
   const token = jwt.sign({ id }, process.env.JWT_SECRET);
@@ -168,12 +171,8 @@ export const forgotPassword = async (req, res, next) => {
   // 2) Generate the random reset token
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  // encrypted
-  const newPasswordResetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-
+  const newPasswordResetToken = createHash(resetToken);
+ 
   const newPasswordResetExpires = Date.now() + 10 * 60 * 1000;
 
   await getDb()
@@ -225,11 +224,7 @@ export const forgotPassword = async (req, res, next) => {
 };
 
 export const resetPassword = async (req, res, next) => {
-  // 1) Get user based on the token
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const hashedToken = createHash(req.params.token);
 
   const db = await getDb().db();
   const user = await db.collection("users").findOne({

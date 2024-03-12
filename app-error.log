@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {"level":"error","message":"new"}
 {"level":"error","message":"Events Error: Unauthenticated user"}
 {"level":"error","message":"Events Error: Unauthenticated user"}
@@ -63,3 +64,35 @@
 {"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"march 9th"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"march 9th\" }"}
 {"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
 {"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
+=======
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1asdas\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1asdas\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo1asdas"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo1asdas\" }"}
+{"kind":"ObjectId","level":"error","message":"Cast to ObjectId failed for value \"65e037fb30bd244bc25e285844\" (type string) at path \"_id\" for model \"User\"","path":"_id","reason":{},"stringValue":"\"65e037fb30bd244bc25e285844\"","value":"65e037fb30bd244bc25e285844","valueType":"string"}
+>>>>>>> 9b6d036d029841c3dc06c1f3d18821c7e9596c1f

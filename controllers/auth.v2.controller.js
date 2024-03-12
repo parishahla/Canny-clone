@@ -1,11 +1,41 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import multer from "multer";
 import { promisify } from "util";
 import sendEmail from "../utils/email.js";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import UserRepository from "../repositories/user.repo.js";
+
+// //* image upload
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/users");
+  },
+  filename: (req, file, cb) => {
+    // user-id-timestamp.jpg -> unique name
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `user-someUserId-${Date.now()}.${ext}`);
+  },
+});
+
+// // filter out the ones that are not images
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not an image", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+export const uploadUserPhoto = upload.single("photo");
+
 
 const signToken = (id) => {
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -39,6 +69,7 @@ export const signup = async (req, res, next) => {
       username: req.body.username,
       email: req.body.email,
       password: hashedPW,
+      photo: req.file.filename,
     };
 
     await userRepo.createUser(newUser);

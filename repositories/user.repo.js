@@ -7,8 +7,7 @@ import User from "../model/user.model.js";
 class UserRepository {
   async createUser(userData) {
     try {
-      const user = new User(userData);
-      return await user.save();
+     await User.create(userData);
     } catch (error) {
       logger.error(error);
       return new AppError("Could not create the user", 404);
@@ -20,13 +19,13 @@ class UserRepository {
       return await User.findById(userId);
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not get the user", 404);
+      throw new AppError("Could not get the user", 404);
     }
   }
 
   async getAllUser() {
     try {
-      return await User.find();
+      return await User.find({});
     } catch (error) {
       logger.error(error);
       return new AppError("Could not get the users", 404);
@@ -47,7 +46,7 @@ class UserRepository {
       return await User.findByIdAndDelete(userId);
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not create the user", 404);
+      return new AppError("Could not delete the user", 404);
     }
   }
 
@@ -56,12 +55,17 @@ class UserRepository {
       return await User.findOne(username);
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not create the user", 404);
+      return new AppError("Could not get the user", 404);
     }
   }
 
   async getUserByEmail(email) {
-    return await User.findOne({ email });
+    try {
+      return await User.findOne({ email });
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user", 404);
+    }
   }
 
   async getUserForAuth(hashedToken) {
