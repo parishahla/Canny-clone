@@ -46,7 +46,7 @@ class UserRepository {
       return await User.findByIdAndDelete(userId);
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not create the user", 404);
+      return new AppError("Could not delete the user", 404);
     }
   }
 
@@ -55,12 +55,17 @@ class UserRepository {
       return await User.findOne(username);
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not create the user", 404);
+      return new AppError("Could not get the user", 404);
     }
   }
 
   async getUserByEmail(email) {
-    return await User.findOne({ email });
+    try {
+      return await User.findOne({ email });
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user", 404);
+    }
   }
 
   async getUserForAuth(hashedToken) {
