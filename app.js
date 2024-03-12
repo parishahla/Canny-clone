@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
 import routerInstance from "./routes/user.v2.route.js";
 import errorController from "./controllers/error.controller.js";
+import Router from "./routes/user.v2.route.js"
 import logger from "./logger/logger.js";
 
 dotenv.config();
@@ -21,7 +22,10 @@ const app = express();
 app.use(express.json());
 
 //* Router class
-app.use("/api/v2/users", routerInstance.getRouter);
+// const routerInstance = new Router();
+// console.log(routerInstance);
+app.use("/api/v2/users", routerInstance.getRouter());
+
 app.use("/api/v2/feedback", feedbackRouterV2);
 
 //* Logger( Morgan )

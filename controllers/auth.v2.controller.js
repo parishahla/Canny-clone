@@ -159,8 +159,8 @@ export const protect = async (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   // 1) Get user based on POSTed email
   const { email } = req.body;
-  console.log(email)
-  const user = await UserRepository.getUserById({ email });
+  console.log(email);
+  const user = await UserRepository.getUserByEmail({ email });
 
   if (!user) {
     return next(new AppError("There is no user with email address.", 404));

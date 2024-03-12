@@ -20,6 +20,15 @@ import {
 class Router {
   constructor() {
     this.router = express.Router();
+    this.setUpRoutes();
+  }
+
+  setUpRoutes() {
+    this.router.post("/signin", login);
+    this.router.post("/signup", signup);
+    this.router.patch("/resetPassword/:token", resetPassword);
+    this.router.post("/forgotPassword", forgotPassword);
+    this.router.route("/").get(getAllUsers);
   }
 
   get(path, handler) {
@@ -47,18 +56,6 @@ class Router {
   }
 }
 
-const routerInstance = new Router();
-
-function logIt() {
-  console.log("im being logged");
-}
-
-routerInstance.post("/signup", logIt, signup, logIt);
-routerInstance.post("/signin", login);
-
-routerInstance.post("/forgotPassword", logIt, forgotPassword);
-routerInstance.patch("/resetPassword/:token", resetPassword);
-
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
 // routerInstance
 //   .route("/:id")
@@ -66,5 +63,5 @@ routerInstance.patch("/resetPassword/:token", resetPassword);
 //   .patch(protect, updateUser)
 //   .delete(protect, deleteUser);
 
-export default routerInstance;
-// export default Router;
+export default new Router();
+

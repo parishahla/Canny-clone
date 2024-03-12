@@ -27,7 +27,7 @@ function sendErrorProd(err, res) {
 export default (err, req, res, next) => {
   // const statusCode = err.statusCode || 500;
   // const message = err.message || "Internal Server Error";
-
+  console.log(err);
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
