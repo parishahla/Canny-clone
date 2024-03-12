@@ -14,12 +14,21 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import router from "./feedback.v2.route.js";
+
 // import Validate from "../controllers/validation.js";
 
 class Router {
   constructor() {
     this.router = express.Router();
+    this.setUpRoutes();
+  }
+
+  setUpRoutes() {
+    this.router.post("/signin", login);
+    this.router.post("/signup", signup);
+    this.router.patch("/resetPassword/:token", resetPassword);
+    this.router.post("/forgotPassword", forgotPassword);
+    this.router.route("/").get(getAllUsers);
   }
 
   get(path, handler) {
@@ -41,15 +50,11 @@ class Router {
   patch(path, handler) {
     this.router.patch(path, handler);
   }
+
+  getRouter() {
+    return this.router;
+  }
 }
-
-const routerInstance = new Router();
-
-routerInstance.post("/signup", signup.bind(this));
-routerInstance.post("/signin", login);
-
-routerInstance.post("/forgotPassword", forgotPassword);
-routerInstance.patch("/resetPassword/:token", resetPassword);
 
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
 // routerInstance
@@ -58,5 +63,5 @@ routerInstance.patch("/resetPassword/:token", resetPassword);
 //   .patch(protect, updateUser)
 //   .delete(protect, deleteUser);
 
-export default routerInstance;
-// export default Router;
+export default new Router();
+

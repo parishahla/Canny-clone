@@ -1,4 +1,3 @@
-import Feedback from "../model/feedback.model.js";
 import errorHandler from "../utils/error.js";
 import AppError from "../utils/appError.js";
 import FeedbackRepository from "../repositories/feedback.repo.js";
