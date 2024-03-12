@@ -61,7 +61,6 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = async (req, res, next) => {
-  const userRepo = new UserRepository();
   const hashedPW = await bcrypt.hash(req.body.password, 12);
 
   try {
@@ -69,10 +68,10 @@ export const signup = async (req, res, next) => {
       username: req.body.username,
       email: req.body.email,
       password: hashedPW,
-      photo: req.file.filename,
+      // photo: req.file.filename,
     };
-    console.log(newUser)
-    await userRepo.createUser(newUser);
+
+    await UserRepository.createUser(newUser);
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });

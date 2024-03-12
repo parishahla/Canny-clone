@@ -29,7 +29,12 @@ class Router {
     this.router.patch("/resetPassword/:token", resetPassword);
     this.router.post("/forgotPassword", forgotPassword);
     this.router.route("/").get(getAllUsers);
+    this.router.route("/").post(createUser);
+    this.router.route("/:id").get(getUser);
+    this.router.route("/:id").patch(updateUser);
+    this.router.route("/:id").delete(deleteUser);
   }
+  //! other middlewares: protect, validate, upload img
 
   get(path, handler) {
     this.router.get(path, handler);

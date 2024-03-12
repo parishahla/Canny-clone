@@ -60,11 +60,9 @@ export const uploadUserPhoto = upload.single("photo");
 // }
 
 export const getAllUsers = async (req, res, next) => {
-  const userRepo = new UserRepository();
-
   try {
     // user object - destructure if needed
-    const users = await userRepo.getAllUser();
+    const users = await UserRepository.getAllUser();
     res.status(200).json(users);
   } catch (error) {
     logger.error(error);
@@ -74,9 +72,7 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
   try {
-    const userRepo = new UserRepository();
-
-    const user = await userRepo.getUserById(req.params.id);
+    const user = await UserRepository.getUserById(req.params.id);
 
     //! handle the wrong id in a another way
     if (!user) return next(errorHandler(404, "User not found!"));
@@ -89,22 +85,20 @@ export const getUser = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
-  // const { error, value } = schema.validate({ a: 'a string' });
-
-  const userRepo = new UserRepository();
   try {
     const newUser = {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
-      photo: req.file.filename,
+      // photo: req.file.filename,
     };
+    console.log(newUser);
     // const r1 = await validateInput(newUser);
     // console.log(r1);
     // const  error = await checkUnique(newUser);
     // if (error) return console.log(error);
 
-    const result = await userRepo.createUser(newUser);
+    const result = await UserRepository.createUser(newUser);
 
     res.status(201).json(result);
   } catch (error) {
@@ -114,21 +108,21 @@ export const createUser = async (req, res, next) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  const userRepo = new UserRepository();
   try {
-    const updatedUser = await userRepo.updateUser(req.params.id, req.body);
-    const { password, ...rest } = updatedUser._doc;
-    res.status(200).json(rest);
+    const updatedUser = await UserRepository.updateUser(
+      req.params.id,
+      req.body,
+    );
+    // const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(updatedUser);
   } catch (error) {
     next(error);
   }
 };
 
 export const deleteUser = async (req, res, next) => {
-  const userRepo = new UserRepository();
-
   try {
-    await userRepo.deleteUser(req.params.id);
+    await UserRepository.deleteUser(req.params.id);
     res.status(200).json("User has been deleted!");
   } catch (error) {
     next(error);
