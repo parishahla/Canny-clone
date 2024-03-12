@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { promisify } from "util";
 import { ObjectId } from "mongodb";
 import AppError from "../utils/appError.js";
-import { getDb } from "../db.js";
 import logger from "../logger/logger.js";
 import VoteRepository from "../repositories/vote.repo.js";
 
