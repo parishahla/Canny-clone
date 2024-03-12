@@ -52,10 +52,8 @@ export const signup = async (req, res, next) => {
             password: hashedPW,
           })
           .then((result) => {
-            //! User id ? - no token yet
             const id = result.insertedId;
             // const token = signToken(id);
-
             const token = jwt.sign({ id }, process.env.JWT_SECRET, {
               expiresIn: process.env.JWT_EXPIRES_IN,
             });
@@ -64,7 +62,10 @@ export const signup = async (req, res, next) => {
           })
           .catch((err) => {
             logger.error(err);
-            res.status(500).json({ message: "Creating the user failed." });
+            res.status(500).json({
+              message:
+                "Creating the user failed! Please enter valid credentials.",
+            });
           });
       })
       .catch((err) => {
@@ -137,7 +138,7 @@ export const protect = async (req, res, next) => {
     const currentUser = await getDb()
       .db()
       .collection("users")
-      .findOne({ _id: new ObjectId(decoded.id) });
+      .findOne({ _id: new ObjectId(decoded._id) });
 
     console.log("current user", currentUser);
     // console.log(currentUser);
@@ -188,7 +189,7 @@ export const forgotPassword = async (req, res, next) => {
     );
 
   // //* 3) Send it to user's email
-  const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:token please ignore this email!`;
+  const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:, ${resetToken} token please ignore this email!`;
 
   try {
     await sendEmail({
@@ -225,13 +226,13 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
   const hashedToken = createHash(req.params.token);
 
-  const user = await getDb()
-    .db()
-    .collection("users")
-    .findOne({
-      passwordResetToken: hashedToken,
-      passwordResetExpires: { $gt: new Date(Date.now()) },
-    });
+  const db = await getDb().db();
+  const user = await db.collection("users").findOne({
+    $and: [
+      { passwordResetToken: hashedToken },
+      { passwordResetExpires: { $gt: new Date(Date.now()) } },
+    ],
+  });
 
   // 2) If token has not expired, and there is user, set the new password
   if (!user) {
@@ -241,8 +242,7 @@ export const resetPassword = async (req, res, next) => {
   const hashedPW = await bcrypt.hash(req.body.password, 12);
 
   // 3) Update the user
-  await getDb()
-    .db()
+  await db
     .collection("users")
     .updateOne(
       { email: req.body.email },
@@ -254,7 +254,9 @@ export const resetPassword = async (req, res, next) => {
           passwordResetExpires: undefined,
         },
       },
-    );
+    )
+    .catch((err) => logger.error(err));
+
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
 };

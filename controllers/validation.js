@@ -1,10 +1,26 @@
-import User from "../model/user.model.js";
+import Joi from "joi";
+
+const userValidation = Joi.object({
+  username: Joi.string().alphanum().min(3).max(30).required(),
+  email: Joi.string().email({
+    minDomainSegments: 3,
+    tlds: { allow: ["com", "net", "io"] },
+  }),
+  photo: Joi.string(),
+  password: Joi.string(),
+  passwordConfirm: Joi.string(),
+});
+
+export default userValidation;
 
 // This piece of code is supposed to work with api v2.0.0 -
+// import User from "../model/user.model.js";
+
 class Validate {
   constructor(model) {
     this.model = model;
   }
+  //! no need for async - await 
   async findEmail(email) {
     return await this.model.findOne({ email: email });
   }

@@ -1,50 +1,30 @@
-{"level":"error","message":"new"}
-{"level":"error","message":"Events Error: Unauthenticated user"}
-{"level":"error","message":"Events Error: Unauthenticated user"}
-{"level":"error","message":"client.db(...).collection(...).find(...).map(...).then is not a function"}
-{"level":"error","message":"client.db(...).collection(...).find(...).map(...).then is not a function"}
-{"level":"error","message":"AppError is not a constructor"}
-{"level":"error","message":"AppError is not a constructor"}
-{"level":"error","message":"user is not defined"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'Password')"}
-{"level":"error","message":"Cannot read properties of undefined (reading 'Password')"}
-{"level":"error","message":"getDb(...).db(...).collection(...).findOne(...).select is not a function"}
-{"level":"error","message":"data and hash arguments required"}
-{"level":"error","message":"Expected \"payload\" to be a plain object."}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"shrek"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"shrek\" }"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"shrek"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"shrek\" }"}
-{"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":null},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: null }"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":null},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: null }"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"upload image"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"upload image\" }"}
-<<<<<<< HEAD
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Must be a valid email address","details":[{"consideredValue":"niko8@*g.com","operatorName":"pattern","reason":"regular expression did not match","specifiedAs":{"pattern":"^[a-zA-Z0-9._%+-]+@[a-zAZ0-9.-]+\\.[a-zA-Z]{2,}$"}}],"propertyName":"email"}]}]},"failingDocumentId":"65e8136e3d0d28217c42081c"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Username must be a string and is required","details":[{"consideredType":"int","consideredValue":1445453,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"username"}]}]},"failingDocumentId":"65e8148f420009b27bbc3f81"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Username must be a string and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"username"},{"description":"Must be a valid email address","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"email"},{"description":"Must be a string of at least 8 characters and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"password"},{"details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"photo"}]}]},"failingDocumentId":"65e823fd599725866d698777"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Username must be a string and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"username"},{"description":"Must be a valid email address","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"email"},{"description":"Must be a string of at least 8 characters and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"password"},{"details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"photo"}]}]},"failingDocumentId":"65e8240b599725866d698778"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"someoneee"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"someoneee\" }"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"someoneee2"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"someoneee2\" }"}
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Must be a string of at least 8 characters and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"password"}]}]},"failingDocumentId":"65e814a2420009b27bbc3f82"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":121,"errInfo":{"details":{"operatorName":"$jsonSchema","schemaRulesNotSatisfied":[{"operatorName":"properties","propertiesNotSatisfied":[{"description":"Must be a string of at least 8 characters and is required","details":[{"consideredType":"null","consideredValue":null,"operatorName":"bsonType","reason":"type did not match","specifiedAs":{"bsonType":"string"}}],"propertyName":"password"}]}]},"failingDocumentId":"65e814a2420009b27bbc3f82"},"index":0,"level":"error","message":"Document failed validation"}
-{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Pari"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Pari\" }"}
-{"level":"error","message":"Argument passed in does not match the accepted types"}
-{"level":"error","message":"Argument passed in does not match the accepted types"}
-{"level":"error","message":"Class constructor ObjectId cannot be invoked without 'new'"}
-=======
-{"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
-{"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
-{"level":"error","message":"getaddrinfo ENOTFOUND everest.liara.cloud","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":"rs0","stale":false,"type":"Single"}}
-{"code":11000,"index":0,"keyPattern":{"email":1},"keyValue":{"email":"liara@l.com"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: email_1 dup key: { email: \"liara@l.com\" }"}
-{"code":11000,"index":0,"keyPattern":{"email":1},"keyValue":{"email":"liara@l.com"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: email_1 dup key: { email: \"liara@l.com\" }"}
-{"code":11000,"index":0,"keyPattern":{"email":1},"keyValue":{"email":"liara@l.com"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: email_1 dup key: { email: \"liara@l.com\" }"}
-{"code":11000,"index":0,"keyPattern":{"email":1},"keyValue":{"email":"pari2@g.com"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: email_1 dup key: { email: \"pari2@g.com\" }"}
->>>>>>> 94497bb002257eda3d73192d54fd94181e8d8a09
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"User.crea is not a function"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo\" }"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1asdas\" (type string)"}
+{"level":"error","message":"Parameter \"filter\" to findOne() must be an object, got \"Mongo1asdas\" (type string)"}
+{"code":11000,"index":0,"keyPattern":{"username":1},"keyValue":{"username":"Mongo1asdas"},"level":"error","message":"E11000 duplicate key error collection: my-app.users index: username_1 dup key: { username: \"Mongo1asdas\" }"}
+{"kind":"ObjectId","level":"error","message":"Cast to ObjectId failed for value \"65e037fb30bd244bc25e285844\" (type string) at path \"_id\" for model \"User\"","path":"_id","reason":{},"stringValue":"\"65e037fb30bd244bc25e285844\"","value":"65e037fb30bd244bc25e285844","valueType":"string"}
