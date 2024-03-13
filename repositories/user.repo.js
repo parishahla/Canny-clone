@@ -7,7 +7,7 @@ import User from "../model/user.model.js";
 class UserRepository {
   async createUser(userData) {
     try {
-     await User.create(userData);
+     return await User.create(userData);
     } catch (error) {
       logger.error(error);
       return new AppError("Could not create the user", 404);

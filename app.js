@@ -1,11 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
+import proccess from "node:process";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
 import routerInstance from "./routes/user.v2.route.js";
 import errorController from "./controllers/error.controller.js";
 import logger from "./logger/logger.js";
+import App from "./server.js";
 
 dotenv.config();
 
@@ -16,33 +18,40 @@ mongoose
   })
   .catch((err) => logger.error(err));
 
-// 1) Middlewares
-const app = express();
-app.use(express.json());
+App.request_logger();
+App.setupRoutes();
+// App.JSON();
+// App.handleError();
+App.start(process.env.PORT);
+
+process.on("beforeExit", (code) => {
+  console.log("Process beforeExit event with code: ", code);
+});
+
+// // 1) Middlewares
+// const app = express();
+// app.use(express.json());
 
 //* Router class
-app.use("/api/v2/users", routerInstance.getRouter());
-app.use("/api/v2/feedback", feedbackRouterV2);
+// app.use("/api/v2/users", routerInstance.getRouter());
+// app.use("/api/v2/feedback", feedbackRouterV2);
 
 //* Logger( Morgan )
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
-}
-
-//* Error handling - global
-app.use(errorController);
+// if (process.env.NODE_ENV === "development") {
+//   app.use(morgan("dev"));
+// }
 
 //* Handle
-app.all("*", (req, res, next) => {
-  const err = new Error(`Can not find ${req.originalUrl} on this server`);
-  err.status = "fail";
-  err.statusCode = 404;
-  next(err);
-  // next(new AppError(`Can not find ${req.originalUrl} on this server`, 404));
-});
+// app.all("*", (req, res, next) => {
+//   const err = new Error(`Can not find ${req.originalUrl} on this server`);
+//   err.status = "fail";
+//   err.statusCode = 404;
+//   next(err);
+// next(new AppError(`Can not find ${req.originalUrl} on this server`, 404));
+// });
 
-const port = 2000;
+// const port = 2000;
 
-app.listen(port, () => {
-  logger.info(`app listening`);
-});
+// app.listen(port, () => {
+//   logger.info(`app listening`);
+// });

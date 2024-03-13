@@ -24,16 +24,17 @@ class Router {
   }
 
   setUpRoutes() {
-    this.router.post("/signin", login);
-    this.router.post("/signup", signup);
-    this.router.patch("/resetPassword/:token", resetPassword);
-    this.router.post("/forgotPassword", forgotPassword);
-    this.router.route("/").get(getAllUsers);
-    this.router.route("/").post(createUser);
-    this.router.route("/:id").get(getUser);
-    this.router.route("/:id").patch(updateUser);
-    this.router.route("/:id").delete(deleteUser);
+    this.post("/signup", signup);
+    this.post("/signin", login);
+    this.patch("/resetPassword/:token", resetPassword);
+    this.post("/forgotPassword", forgotPassword); //! 128 - new fields
+    this.get("/", getAllUsers);
+    this.post("/", createUser);
+    this.get("/:id", getUser);
+    this.patch("/:id", updateUser);
+    this.delete("/:id", deleteUser);
   }
+  //! chaining routes that have the same address
   //! other middlewares: protect, validate, upload img
 
   get(path, handler) {
@@ -41,6 +42,7 @@ class Router {
   }
 
   post(path, handler) {
+    console.log("made to router")
     this.router.post(path, handler);
   }
 
@@ -61,6 +63,7 @@ class Router {
   }
 }
 
+//! chained example
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
 // routerInstance
 //   .route("/:id")
