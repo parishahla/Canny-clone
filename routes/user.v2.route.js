@@ -30,31 +30,31 @@ class Router {
     this.post("/forgotPassword", forgotPassword);
     this.post("/", createUser);
     this.patch("/resetPassword/:token", resetPassword);
-    this.patch("/:id", updateUser);
-    this.get("/", getAllUsers);
-    this.get("/:id", getUser);
+    this.patch("/:id", protect, validate(this.schema), updateUser);
+    this.get("/", protect, getAllUsers);
+    this.get("/:id", protect, getUser);
     this.delete("/:id", protect, deleteUser);
   }
   //! other middlewares: protect, validate, schema, upload img, these should all be passed as optional arguments
 
-  get(path, handler) {
-    this.router.get(path, handler);
+  get(path, ...handler) {
+    this.router.get(path, ...handler);
   }
 
   post(path, ...handlers) {
     this.router.post(path, ...handlers);
   }
 
-  // put(path, protect, uploadImg, validate, handler) {
-  //   this.router.put(path, handler);
-  // }
+  put(path, handler) {
+    this.router.put(path, handler);
+  }
 
   delete(path, ...handler) {
     this.router.delete(path, ...handler);
   }
 
-  patch(path, handler) {
-    this.router.patch(path, handler);
+  patch(path, ...handler) {
+    this.router.patch(path, ...handler);
   }
 
   getRouter() {

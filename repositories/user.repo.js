@@ -7,7 +7,7 @@ import User from "../model/user.model.js";
 class UserRepository {
   async createUser(userData) {
     try {
-     return await User.create(userData);
+      return await User.create(userData);
     } catch (error) {
       logger.error(error);
       return new AppError("Could not create the user", 404);
@@ -34,7 +34,13 @@ class UserRepository {
 
   async updateUser(userId, newData) {
     try {
-      return await User.findByIdAndUpdate(userId, newData, { new: true });
+      //! Would these options cause any potential injection risks?
+      //! addField()
+      return await User.findByIdAndUpdate(userId, newData, {
+        new: true,
+        multi: true,
+        upsert: true,
+      });
     } catch (error) {
       logger.error(error);
       return new AppError("Could not update the user", 404);

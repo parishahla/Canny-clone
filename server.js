@@ -2,7 +2,6 @@ import express from "express";
 import Fastify from "fastify";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-import bodyParser from "body-parser";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
 import routerInstance from "./routes/user.v2.route.js";
 import errorController from "./controllers/error.controller.js";
@@ -18,7 +17,6 @@ class App {
   }
 
   setupRoutes() {
-    //? The order would not be recognized when calling the function in app.js, but why?
     this.app.use("/api/v2/users", routerInstance.getRouter());
     this.app.use("/api/v2/feedback", feedbackRouterV2);
   }
