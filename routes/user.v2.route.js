@@ -1,4 +1,6 @@
 import express from "express";
+import http from "node:http";
+
 import {
   getAllUsers,
   createUser,
@@ -14,26 +16,18 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
+import valiateSignup from "../middlewares/validation.js";
+import schema from "../middlewares/validationSchema.js";
 
-import { valiateUserInput } from "../middlewares/validation.js";
-import userValidationSchema from "../middlewares/validationSchema.js";
 class Router {
   constructor() {
     this.router = express.Router();
-    this.userValidationSchema = userValidationSchema;
+    this.shema = schema;
     this.setUpRoutes();
   }
 
-  validateUserInput(req, res, next) {
-    const error = valiateUserInput(req.body, this.userValidationSchema);
-    if (error) {
-      return res.status(400).json({ error });
-    }
-    next();
-  }
-
   setUpRoutes() {
-    this.post("/signup", signup);
+    this.post("/signup", valiateSignup(req.body, shema, signup));
     this.post("/signin", login);
     this.post("/forgotPassword", forgotPassword); //! 128 - new fields
     this.post("/", createUser);
@@ -80,4 +74,3 @@ class Router {
 //   .delete(protect, deleteUser);
 
 export default new Router();
-

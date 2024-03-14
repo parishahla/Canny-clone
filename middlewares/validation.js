@@ -1,9 +1,12 @@
-export function valiateUserInput(data, schema) {
-  const { error } = schema.validate(data);
-  // if there is no error, error gets => undifined
-  if (error) {
-    return error.details[0].message;
-  }
+export default function valiateSignup(data, schema, signup) {
+  return (req, res, next) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      res.status(400).json({ error: error.details[0].message });
+    } else {
+      next(signup);
+    }
+  };
 }
 
 //*************************************** */

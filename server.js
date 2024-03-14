@@ -31,7 +31,7 @@ class App {
 
   start(port) {
     this.app.listen(port, () => {
-      console.log("Server is now listening on Fastify");
+      console.log("Server is now listening on Express");
     });
   }
 }
