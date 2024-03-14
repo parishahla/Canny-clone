@@ -118,7 +118,6 @@ export const login = async (req, res, next) => {
 
 //* Route protector middleware
 export const protect = async (req, res, next) => {
-  const userRepo = new UserRepository();
   try {
     // 1) Getting token and check of it's there
     let token;
@@ -142,7 +141,7 @@ export const protect = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
     // 3) Check if user still exists
-    const currentUser = await userRepo.getUserById(decoded._id);
+    const currentUser = await UserRepository.getUserById(decoded._id);
 
     if (!currentUser) {
       return next(
@@ -154,7 +153,7 @@ export const protect = async (req, res, next) => {
     req.user = currentUser;
     next();
   } catch (err) {
-    next(err);
+    return new AppError("Protection failed");
   }
 };
 

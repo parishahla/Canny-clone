@@ -7,7 +7,6 @@ import {
   getUser,
   updateUser,
   deleteUser,
-  uploadUserPhoto,
 } from "../controllers/user.v2.controller.js";
 import {
   signup,
@@ -16,18 +15,19 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import valiateSignup from "../middlewares/validation.js";
+import validateF from "../middlewares/validation.js";
 import schema from "../middlewares/validationSchema.js";
+import uploadPhoto from "../middlewares/imageUpload.js";
 
 class Router {
   constructor() {
     this.router = express.Router();
-    this.shema = schema;
+    this.schema = schema;
     this.setUpRoutes();
   }
 
   setUpRoutes() {
-    this.post("/signup", valiateSignup(req.body, shema, signup));
+    // this.post("/signup", );
     this.post("/signin", login);
     this.post("/forgotPassword", forgotPassword); //! 128 - new fields
     this.post("/", createUser);
@@ -44,13 +44,14 @@ class Router {
     this.router.get(path, handler);
   }
 
-  post(path, handler) {
-    this.router.post(path, handler);
+  post(path, protection, uploadImg, validate, handler) {
+    console.log("post method function");
+    this.router.post(path, protection, uploadImg, validate, handler);
   }
 
-  put(path, handler) {
-    this.router.put(path, handler);
-  }
+  // put(path, protect, uploadImg, validate, handler) {
+  //   this.router.put(path, handler);
+  // }
 
   delete(path, handler) {
     this.router.delete(path, handler);
@@ -65,6 +66,15 @@ class Router {
   }
 }
 
+const routerInstance = new Router();
+routerInstance.post(
+  "/signup",
+  protect,
+  uploadPhoto,
+  validateF(this.schema),
+  signup,
+);
+
 //! chained example
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
 // routerInstance
@@ -73,4 +83,4 @@ class Router {
 //   .patch(protect, updateUser)
 //   .delete(protect, deleteUser);
 
-export default new Router();
+export default routerInstance;
