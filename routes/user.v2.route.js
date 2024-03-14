@@ -15,7 +15,7 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import validateF from "../middlewares/validation.js";
+import validate from "../middlewares/validation.js";
 import schema from "../middlewares/validationSchema.js";
 import uploadPhoto from "../middlewares/imageUpload.js";
 
@@ -27,7 +27,7 @@ class Router {
   }
 
   setUpRoutes() {
-    // this.post("/signup", );
+    this.post("/signup", uploadPhoto, validate(this.schema), signup);
     this.post("/signin", login);
     this.post("/forgotPassword", forgotPassword); //! 128 - new fields
     this.post("/", createUser);
@@ -35,7 +35,7 @@ class Router {
     this.patch("/:id", updateUser);
     this.get("/", getAllUsers);
     this.get("/:id", getUser);
-    this.delete("/:id", deleteUser);
+    this.delete("/:id", protect, deleteUser);
   }
   //! chaining routes that have the same address
   //! other middlewares: protect, validate, upload img
@@ -44,17 +44,16 @@ class Router {
     this.router.get(path, handler);
   }
 
-  post(path, protection, uploadImg, validate, handler) {
-    console.log("post method function");
-    this.router.post(path, protection, uploadImg, validate, handler);
+  post(path, ...handlers) {
+    this.router.post(path, ...handlers);
   }
 
   // put(path, protect, uploadImg, validate, handler) {
   //   this.router.put(path, handler);
   // }
 
-  delete(path, handler) {
-    this.router.delete(path, handler);
+  delete(path, ...handler) {
+    this.router.delete(path, ...handler);
   }
 
   patch(path, handler) {
@@ -66,14 +65,14 @@ class Router {
   }
 }
 
-const routerInstance = new Router();
-routerInstance.post(
-  "/signup",
-  protect,
-  uploadPhoto,
-  validateF(this.schema),
-  signup,
-);
+// const routerInstance = new Router();
+// routerInstance.post(
+//   "/signup",
+//   protect,
+//   uploadPhoto,
+//   validateF(this.schema),
+//   signup,
+// );
 
 //! chained example
 // routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
@@ -83,4 +82,4 @@ routerInstance.post(
 //   .patch(protect, updateUser)
 //   .delete(protect, deleteUser);
 
-export default routerInstance;
+export default new Router();

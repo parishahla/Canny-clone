@@ -1,5 +1,6 @@
 import express from "express";
 import Fastify from "fastify";
+import bodyParser from "body-parser";
 import morgan from "morgan";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
 import routerInstance from "./routes/user.v2.route.js";
@@ -9,6 +10,9 @@ import logger from "./logger/logger.js";
 class App {
   constructor() {
     this.app = express();
+    this.app.use(bodyParser.json());
+    this.requestLogger();
+    this.handleError();
     this.setupRoutes();
   }
 
@@ -21,7 +25,7 @@ class App {
     this.app.use("/api/v2/feedback", feedbackRouterV2);
   }
 
-  request_logger() {
+  requestLogger() {
     this.app.use(morgan("dev"));
   }
 

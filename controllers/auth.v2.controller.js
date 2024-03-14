@@ -1,40 +1,11 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import multer from "multer";
 import { promisify } from "util";
 import sendEmail from "../utils/email.js";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import UserRepository from "../repositories/user.repo.js";
-
-// //* image upload
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/img/users");
-  },
-  filename: (req, file, cb) => {
-    // user-id-timestamp.jpg -> unique name
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `user-someUserId-${Date.now()}.${ext}`);
-  },
-});
-
-// // filter out the ones that are not images
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb(new AppError("Not an image", 400), false);
-  }
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
-
-export const uploadUserPhoto = upload.single("photo");
 
 const signToken = (id) => {
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -61,21 +32,23 @@ const createSendToken = (user, statusCode, res) => {
 
 export const signup = async (req, res, next) => {
   try {
-    console.log("made it to handler function")
-    console.log(req.body.password)
+    if (await UserRepository.getUserByEmail(req.body.email)) {
+      throw new AppError("This email has been taken");
+    }
+
+    if (await UserRepository.getUserByUsername(req.body.username)) {
+      throw new AppError("This username has been taken");
+    }
+
     const hashedPW = await bcrypt.hash(req.body.password, 12);
-  
-    const newUser = {
+
+    const newData = {
       username: req.body.username,
       email: req.body.email,
       password: hashedPW,
-      // photo: req.file.filename,
+      photo: req.file.filename,
     };
-    console.log("newUser");
-
-    console.log(newUser);
-
-    await UserRepository.createUser(newUser).catch((err) => console.log(err));
+    const newUser = await UserRepository.createUser(newData).catch((err) => console.log(err));
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -119,7 +92,7 @@ export const login = async (req, res, next) => {
 //* Route protector middleware
 export const protect = async (req, res, next) => {
   try {
-    // 1) Getting token and check of it's there
+    // 1) get the token
     let token;
     if (
       req.headers.authorization &&
@@ -140,8 +113,9 @@ export const protect = async (req, res, next) => {
     // 2) Verification token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
+
     // 3) Check if user still exists
-    const currentUser = await UserRepository.getUserById(decoded._id);
+    const currentUser = await UserRepository.getUserById(decoded.id);
 
     if (!currentUser) {
       return next(
@@ -189,31 +163,32 @@ export const forgotPassword = async (req, res, next) => {
   }).catch((err) => logger.error(err));
   console.log("prom res");
   console.log(promRes);
+
   // //* 3) Send it to user's email
   const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:, ${resetToken} token please ignore this email!`;
 
-  // try {
-  //   await sendEmail({
-  //     email: email,
-  //     subject: "Your password reset token (valid for 10 min)",
-  //     message,
-  //   });
+  try {
+    await sendEmail({
+      email: email,
+      subject: "Your password reset token (valid for 10 min)",
+      message,
+    });
 
-  //   res.status(200).json({
-  //     status: "success",
-  //     message: "Token sent to email!",
-  //   });
-  // } catch (err) {
-  //   // delete the token and expiration
-  //   await UserRepository.updateUser(user._id, {
-  //     passwordResetToken: undefined,
-  //     passwordResetExpires: undefined,
-  //   });
-  //   return next(
-  //     new AppError("There was an error sending the email. Try again later!"),
-  //     500,
-  //   );
-  // }
+    res.status(200).json({
+      status: "success",
+      message: "Token sent to email!",
+    });
+  } catch (err) {
+    // delete the token and expiration
+    await UserRepository.updateUser(user._id, {
+      passwordResetToken: undefined,
+      passwordResetExpires: undefined,
+    });
+    return next(
+      new AppError("There was an error sending the email. Try again later!"),
+      500,
+    );
+  }
 };
 
 export const resetPassword = async (req, res, next) => {

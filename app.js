@@ -18,10 +18,6 @@ mongoose
   })
   .catch((err) => logger.error(err));
 
-App.request_logger();
-App.setupRoutes();
-// App.JSON();
-// App.handleError();
 App.start(process.env.PORT);
 
 process.on("beforeExit", (code) => {
