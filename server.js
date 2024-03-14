@@ -1,5 +1,6 @@
 import express from "express";
 import Fastify from "fastify";
+import bodyParser from "body-parser";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";

@@ -52,7 +52,7 @@ class UserRepository {
 
   async getUserByUsername(username) {
     try {
-      return await User.findOne(username);
+      return await User.findOne({ username });
     } catch (error) {
       logger.error(error);
       return new AppError("Could not get the user", 404);

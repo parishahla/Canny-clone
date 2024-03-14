@@ -7,7 +7,6 @@ import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import UserRepository from "../repositories/user.repo.js";
 
-
 const signToken = (id) => {
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -33,15 +32,23 @@ const createSendToken = (user, statusCode, res) => {
 
 export const signup = async (req, res, next) => {
   try {
+    if (await UserRepository.getUserByEmail(req.body.email)) {
+      throw new AppError("This email has been taken");
+    }
+
+    if (await UserRepository.getUserByUsername(req.body.username)) {
+      throw new AppError("This username has been taken");
+    }
+
     const hashedPW = await bcrypt.hash(req.body.password, 12);
 
-    const newUser = {
+    const newData = {
       username: req.body.username,
       email: req.body.email,
       password: hashedPW,
-      // photo: req.file.filename,
+      photo: req.file.filename,
     };
-    await UserRepository.createUser(newUser).catch((err) => logger.error(err));
+    const newUser = await UserRepository.createUser(newData).catch((err) => console.log(err));
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
@@ -85,7 +92,7 @@ export const login = async (req, res, next) => {
 //* Route protector middleware
 export const protect = async (req, res, next) => {
   try {
-    // 1) Getting token and check of it's there
+    // 1) get the token
     let token;
     if (
       req.headers.authorization &&
@@ -106,8 +113,9 @@ export const protect = async (req, res, next) => {
     // 2) Verification token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
+
     // 3) Check if user still exists
-    const currentUser = await UserRepository.getUserById(decoded._id);
+    const currentUser = await UserRepository.getUserById(decoded.id);
 
     if (!currentUser) {
       return next(
@@ -119,7 +127,7 @@ export const protect = async (req, res, next) => {
     req.user = currentUser;
     next();
   } catch (err) {
-    next(err);
+    return new AppError("Protection failed");
   }
 };
 
@@ -153,7 +161,8 @@ export const forgotPassword = async (req, res, next) => {
       passwordResetExpires: new Date(newPasswordResetExpires),
     },
   }).catch((err) => logger.error(err));
-
+  console.log("prom res");
+  console.log(promRes);
 
   // //* 3) Send it to user's email
   const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:, ${resetToken} token please ignore this email!`;

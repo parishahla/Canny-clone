@@ -1,8 +1,11 @@
-export default function valiateUser(schema) {
+export default function valiateSignup(schema, signin) {
   return (req, res, next) => {
+    //* check for valid input
     const { error } = schema.validate(req.body);
     if (error) {
       res.status(400).json({ error: error.details[0].message });
+    } else {
+      return next(signin);
     }
     next();
   };

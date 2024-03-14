@@ -5,7 +5,6 @@ import {
   getUser,
   updateUser,
   deleteUser,
-  uploadUserPhoto,
 } from "../controllers/user.v2.controller.js";
 import {
   signup,
@@ -14,18 +13,19 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import valiateUser from "../middlewares/validation.js";
+import validate from "../middlewares/validation.js";
 import schema from "../middlewares/validationSchema.js";
-import { uploadPhoto } from "../middlewares/imageUpload.js";
+import uploadPhoto from "../middlewares/imageUpload.js";
 
 class Router {
   constructor() {
     this.router = express.Router();
+    this.schema = schema;
     this.setUpRoutes();
   }
 
   setUpRoutes() {
-    this.post("/signup", signup);
+    this.post("/signup", uploadPhoto, validate(this.schema), signup);
     this.post("/signin", login);
     this.post("/forgotPassword", forgotPassword);
     this.post("/", createUser);
@@ -33,7 +33,7 @@ class Router {
     this.patch("/:id", updateUser);
     this.get("/", getAllUsers);
     this.get("/:id", getUser);
-    this.delete("/:id", deleteUser);
+    this.delete("/:id", protect, deleteUser);
   }
   //! other middlewares: protect, validate, schema, upload img, these should all be passed as optional arguments
 
@@ -41,16 +41,16 @@ class Router {
     this.router.get(path, handler);
   }
 
-  post(path, handler) {
-    this.router.post(path, handler);
+  post(path, ...handlers) {
+    this.router.post(path, ...handlers);
   }
 
-  put(path, handler) {
-    this.router.put(path, handler);
-  }
+  // put(path, protect, uploadImg, validate, handler) {
+  //   this.router.put(path, handler);
+  // }
 
-  delete(path, handler) {
-    this.router.delete(path, handler);
+  delete(path, ...handler) {
+    this.router.delete(path, ...handler);
   }
 
   patch(path, handler) {
@@ -61,5 +61,22 @@ class Router {
     return this.router;
   }
 }
+
+// const routerInstance = new Router();
+// routerInstance.post(
+//   "/signup",
+//   protect,
+//   uploadPhoto,
+//   validateF(this.schema),
+//   signup,
+// );
+
+//! chained example
+// routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
+// routerInstance
+//   .route("/:id")
+//   .get(protect, getUser)
+//   .patch(protect, updateUser)
+//   .delete(protect, deleteUser);
 
 export default new Router();
