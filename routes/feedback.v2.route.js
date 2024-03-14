@@ -11,7 +11,7 @@ import { sendUpvote, sendDownvote } from "../controllers/vote.controller.js";
 // import ValidationMiddleware from "../controllers/validation.js";
 const router = express.Router();
 
-router.route("/").get(getAllFeedback).post(protect, sendFeedback);
+router.route("/").get(getAllFeedback).post(sendFeedback);
 router
   .route("/:id")
   .get(getFeedback)

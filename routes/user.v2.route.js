@@ -1,6 +1,4 @@
 import express from "express";
-import http from "node:http";
-
 import {
   getAllUsers,
   createUser,
@@ -16,20 +14,20 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import valiateSignup from "../middlewares/validation.js";
+import valiateUser from "../middlewares/validation.js";
 import schema from "../middlewares/validationSchema.js";
+import { uploadPhoto } from "../middlewares/imageUpload.js";
 
 class Router {
   constructor() {
     this.router = express.Router();
-    this.shema = schema;
     this.setUpRoutes();
   }
 
   setUpRoutes() {
-    this.post("/signup", valiateSignup(req.body, shema, signup));
+    this.post("/signup", signup);
     this.post("/signin", login);
-    this.post("/forgotPassword", forgotPassword); //! 128 - new fields
+    this.post("/forgotPassword", forgotPassword);
     this.post("/", createUser);
     this.patch("/resetPassword/:token", resetPassword);
     this.patch("/:id", updateUser);
@@ -37,8 +35,7 @@ class Router {
     this.get("/:id", getUser);
     this.delete("/:id", deleteUser);
   }
-  //! chaining routes that have the same address
-  //! other middlewares: protect, validate, upload img
+  //! other middlewares: protect, validate, schema, upload img, these should all be passed as optional arguments
 
   get(path, handler) {
     this.router.get(path, handler);
@@ -64,13 +61,5 @@ class Router {
     return this.router;
   }
 }
-
-//! chained example
-// routerInstance.route("/").get(protect, getAllUsers).post(protect, createUser);
-// routerInstance
-//   .route("/:id")
-//   .get(protect, getUser)
-//   .patch(protect, updateUser)
-//   .delete(protect, deleteUser);
 
 export default new Router();

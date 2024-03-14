@@ -1,6 +1,7 @@
 import express from "express";
 import Fastify from "fastify";
 import morgan from "morgan";
+import bodyParser from "body-parser";
 import feedbackRouterV2 from "./routes/feedback.v2.route.js";
 import routerInstance from "./routes/user.v2.route.js";
 import errorController from "./controllers/error.controller.js";
@@ -9,19 +10,19 @@ import logger from "./logger/logger.js";
 class App {
   constructor() {
     this.app = express();
+    this.app.use(bodyParser.json());
+    this.requestLogger();
+    this.handleError();
     this.setupRoutes();
   }
 
-  JSON() {
-    this.app.use(express.json());
-  }
-
   setupRoutes() {
+    //? The order would not be recognized when calling the function in app.js, but why?
     this.app.use("/api/v2/users", routerInstance.getRouter());
     this.app.use("/api/v2/feedback", feedbackRouterV2);
   }
 
-  request_logger() {
+  requestLogger() {
     this.app.use(morgan("dev"));
   }
 
@@ -31,19 +32,20 @@ class App {
 
   start(port) {
     this.app.listen(port, () => {
-      console.log("Server is now listening on Express");
+      logger.info("Server is now listening on Express");
     });
   }
 }
 
 export default new App();
 
+// fastify methods = get, 
 // fastify.listen({ port: 3000 }, (err, address) => {
 //   if (err) throw err;
 //   console.log("Server is now listening on Fastify");
 // });
 
-// // 1) Middlewares
+// 1) Middlewares - plain code 
 // const app = express();
 // app.use(express.json());
 

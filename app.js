@@ -1,13 +1,7 @@
-import express from "express";
 import mongoose from "mongoose";
-import proccess from "node:process";
-import morgan from "morgan";
 import dotenv from "dotenv";
-import feedbackRouterV2 from "./routes/feedback.v2.route.js";
-import routerInstance from "./routes/user.v2.route.js";
-import errorController from "./controllers/error.controller.js";
-import logger from "./logger/logger.js";
 import App from "./server.js";
+import logger from "./logger/logger.js";
 
 dotenv.config();
 
@@ -18,19 +12,11 @@ mongoose
   })
   .catch((err) => logger.error(err));
 
-App.request_logger();
-App.setupRoutes();
-// App.JSON();
-// App.handleError();
 App.start(process.env.PORT);
-
-process.on("beforeExit", (code) => {
-  console.log("Process beforeExit event with code: ", code);
-});
 
 // // 1) Middlewares
 // const app = express();
-// app.use(express.json());
+// app.use(bodyParser.json());
 
 //* Router class
 // app.use("/api/v2/users", routerInstance.getRouter());
