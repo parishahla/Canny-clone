@@ -4,9 +4,9 @@ const { combine, json, errors, timestamp } = winston.format;
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
-  format: combine(errors(), json(), timestamp(),),
+  format: combine(errors(), json(), timestamp()),
   transports: [
-   new winston.transports.Console(),
+    new winston.transports.Console(),
     new winston.transports.File({
       filename: "app-error.log",
       level: "error",
@@ -15,6 +15,7 @@ const logger = winston.createLogger({
   exceptionHandlers: [
     //* Logs uncaught exceptions
     new winston.transports.File({ filename: "exception.log" }),
+    new winston.transports.Console(),
   ],
   rejectionHandlers: [
     //* Logs rejected promises

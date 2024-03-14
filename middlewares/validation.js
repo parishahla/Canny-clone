@@ -1,18 +1,10 @@
-import Joi from "joi";
-
-// const userValidation = Joi.object({
-//   username: Joi.string().alphanum().min(3).max(30).required(),
-//   email: Joi.string()
-//     .email({
-//       minDomainSegments: 3,
-//       tlds: { allow: ["com", "net", "io"] },
-//     })
-//     .required(),
-//   photo: Joi.string(),
-//   password: Joi.string().min(8).required(),
-// });
-
-// export default userValidation;
+export function valiateUserInput(data, schema) {
+  const { error } = schema.validate(data);
+  // if there is no error, error gets => undifined
+  if (error) {
+    return error.details[0].message;
+  }
+}
 
 //*************************************** */
 // This piece of code is supposed to work with api v2.0.0 -

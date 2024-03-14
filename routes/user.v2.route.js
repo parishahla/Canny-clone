@@ -15,23 +15,32 @@ import {
   protect,
 } from "../controllers/auth.v2.controller.js";
 
-// import Validate from "../controllers/validation.js";
-
+import { valiateUserInput } from "../middlewares/validation.js";
+import userValidationSchema from "../middlewares/validationSchema.js";
 class Router {
   constructor() {
     this.router = express.Router();
+    this.userValidationSchema = userValidationSchema;
     this.setUpRoutes();
+  }
+
+  validateUserInput(req, res, next) {
+    const error = valiateUserInput(req.body, this.userValidationSchema);
+    if (error) {
+      return res.status(400).json({ error });
+    }
+    next();
   }
 
   setUpRoutes() {
     this.post("/signup", signup);
     this.post("/signin", login);
-    this.patch("/resetPassword/:token", resetPassword);
     this.post("/forgotPassword", forgotPassword); //! 128 - new fields
-    this.get("/", getAllUsers);
     this.post("/", createUser);
-    this.get("/:id", getUser);
+    this.patch("/resetPassword/:token", resetPassword);
     this.patch("/:id", updateUser);
+    this.get("/", getAllUsers);
+    this.get("/:id", getUser);
     this.delete("/:id", deleteUser);
   }
   //! chaining routes that have the same address
@@ -42,7 +51,6 @@ class Router {
   }
 
   post(path, handler) {
-    console.log("made to router")
     this.router.post(path, handler);
   }
 
