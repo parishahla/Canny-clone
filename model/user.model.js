@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-//! double check yes or no
 const userSchema = new mongoose.Schema({
   username: {
     type: String,

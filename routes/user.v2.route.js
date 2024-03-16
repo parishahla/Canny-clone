@@ -45,8 +45,8 @@ class Router {
     this.router.post(path, ...handlers);
   }
 
-  put(path, handler) {
-    this.router.put(path, handler);
+  put(path, ...handler) {
+    this.router.put(path, ...handler);
   }
 
   delete(path, ...handler) {
