@@ -28,9 +28,9 @@ class Router {
     this.post("/signup", uploadPhoto, validate(this.schema), signup);
     this.post("/signin", login);
     this.post("/forgotPassword", forgotPassword);
-    this.post("/", createUser);
+    this.post("/", protect, validate(this.schema), createUser);
     this.patch("/resetPassword/:token", resetPassword);
-    this.patch("/:id", protect, validate(this.schema), updateUser);
+    this.patch("/:id", protect, updateUser);
     this.get("/", protect, getAllUsers);
     this.get("/:id", protect, getUser);
     this.delete("/:id", protect, deleteUser);

@@ -1,62 +1,55 @@
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
 import bcrypt from "bcrypt";
-import { promisify } from "util";
-import sendEmail from "../utils/email.js";
+import Mail from "../utils/email.js";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
 import UserRepository from "../repositories/user.repo.js";
-import checkUnique from "../middlewares/checkUnique.js";
-
-const signToken = (id) => {
-  jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
+import { generateToken, isValidToken } from "./token.controller.js";
+import TokenRepository from "../repositories/token.repo.js";
 
 async function correctPassword(candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword);
 }
 
-const createSendToken = (user, statusCode, res) => {
-  const id = user._id;
-  const token = jwt.sign({ id }, process.env.JWT_SECRET);
+const createSendToken = (userId, statusCode, res) => {
+  const token = TokenRepository.signToken(userId);
 
   res.status(statusCode).json({
     status: "success",
     token,
-    data: {
-      user,
-    },
   });
 };
 
 export const signup = async (req, res, next) => {
   try {
+    const payload = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+    };
+
     //* Check for unique email and username
-    if (await UserRepository.getUserByEmail(req.body.email)) {
+    if (await UserRepository.getUserByEmail(payload.email)) {
       throw new AppError("This email has been taken");
     }
 
-    if (await UserRepository.getUserByUsername(req.body.username)) {
+    if (await UserRepository.getUserByUsername(payload.username)) {
       throw new AppError("This username has been taken");
     }
 
-    const hashedPW = await bcrypt.hash(req.body.password, 12);
+    const hashedPW = await bcrypt.hash(payload.password, 12);
 
     const newData = {
-      username: req.body.username,
-      email: req.body.email,
+      username: payload.username,
+      email: payload.email,
       password: hashedPW,
       photo: req.file ? req.file.filename : "default.jpg",
     };
+
     const newUser = await UserRepository.createUser(newData).catch((err) =>
-      console.log(err),
+      logger.error(err),
     );
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    const token = TokenRepository.signToken(newUser._id);
 
     return res.status(201).json({ token, data: { newUser } });
   } catch (error) {
@@ -65,27 +58,22 @@ export const signup = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
+  //!get it from payload
   const { email, password } = req.body;
-  console.log(email, password);
-  //1- Check if email & pass exist
+
   if (!email || !password) {
     return next(new AppError("Please provide email and password!", 400));
   }
 
-  // 2) Check if user exists & password is correct
   const user = await UserRepository.getUserByEmail(email).catch((err) =>
     logger.error(err),
   );
-  const { _id } = user;
 
   if (!user || !(await correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
   }
 
-  // 3) If everything ok, send token to client
-  const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  const token = TokenRepository.signToken(user._id);
   res.status(200).json({
     status: "success",
     token,
@@ -95,7 +83,6 @@ export const login = async (req, res, next) => {
 //* Route protector middleware
 export const protect = async (req, res, next) => {
   try {
-    // 1) get the token
     let token;
     if (
       req.headers.authorization &&
@@ -113,11 +100,18 @@ export const protect = async (req, res, next) => {
       );
     }
 
-    // 2) Verification token
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const decodedId = await TokenRepository.decodeToken(token).catch((err) => {
+      //! JsonWebTokenError handler
+      logger.info(err.name);
+      return next(
+        new AppError(
+          "Could not verify your token! Token eitheris invalid or has expired",
+          404,
+        ),
+      );
+    });
 
-    // 3) Check if user still exists
-    const currentUser = await UserRepository.getUserById(decoded._id);
+    const currentUser = await UserRepository.getUserById(decodedId);
 
     if (!currentUser) {
       return next(
@@ -134,96 +128,64 @@ export const protect = async (req, res, next) => {
 };
 
 export const forgotPassword = async (req, res, next) => {
-  //! dubugging
-  // 1) Get user based on POSTed email
   const { email } = req.body;
-  console.log(email);
 
   const user = await UserRepository.getUserByEmail(email).catch((err) => {
     logger.error(err);
-    throw new AppError(err, 401);
+    throw new AppError("There is no user with this email address.", 404);
   });
-  console.log(user);
 
-  // //! must be handled differently
-  // if (!user) {
-  //   return next(new AppError("There is no user with email address.", 404));
-  // }
+  if (!user) {
+    return next(new AppError("There is no user with this email address.", 404));
+  }
 
-  // 2) Generate the random reset token
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  console.log(resetToken);
-  // encrypted
-  const newPasswordResetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-  console.log(newPasswordResetToken);
+  const resetToken = await generateToken(user._id);
 
-  const newPasswordResetExpires = Date.now() + 10 * 60 * 1000;
-
-  const promRes = await UserRepository.updateUser(user._id, {
-    $set: {
-      passwordResetToken: newPasswordResetToken,
-      passwordResetExpires: new Date(newPasswordResetExpires),
-    },
-  }).catch((err) => logger.error(err));
-  console.log("prom res");
-  console.log(promRes);
-
-  // //* 3) Send it to user's email
+  // * 3) Send it to user's email
   const message = `Forgot your password? Submit a PATCH request with your new password to /api/v3/users/resetPassword/:, ${resetToken} token please ignore this email!`;
 
-  try {
-    await sendEmail({
-      email: email,
-      subject: "Your password reset token (valid for 10 min)",
-      message,
-    });
+  Mail.sendEmail(
+    email,
+    "Your password reset token (valid for 10 min)",
+    message,
+  );
 
-    res.status(200).json({
-      status: "success",
-      message: "Token sent to email!",
-    });
-  } catch (err) {
-    // delete the token and expiration
-    await UserRepository.updateUser(user._id, {
-      passwordResetToken: undefined,
-      passwordResetExpires: undefined,
-    });
-    return next(
-      new AppError("There was an error sending the email. Try again later!"),
-      500,
-    );
-  }
+  //! Refactor sending response - function sendResponse(code, meassage, data, res)
+  res.status(200).json({
+    status: "success",
+    message: "Token sent to email!",
+  });
+  //! try catch wont work, handle deleting the token diffrently
 };
 
 export const resetPassword = async (req, res, next) => {
-  const { email } = req.body.email;
+  const payload = {
+    email: req.body.email,
+    password: req.body.password,
+    token: req.params.token,
+  };
 
-  // 1) Get user based on the token
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(req.params.token)
-    .digest("hex");
+  const user = await UserRepository.getUserByEmail(payload.email);
 
-  const user = await UserRepository.getUserForAuth(hashedToken);
+  const isValid = await isValidToken(payload.token, user._id).catch((err) => {
+    logger.info(err);
+    throw new AppError("Token expired", 404);
+  });
 
-  // 2) If token has not expired, and there is user, set the new password
-  if (!user) {
-    return next(new AppError("Token is invalid or has expired", 400));
+  if (!isValid) {
+    res.status(404).json({
+      status: "fail",
+      message: "Token is invalid or has expired",
+    });
+    throw new AppError("Token is invalid or has expired", 404);
   }
 
   const hashedPW = await bcrypt.hash(req.body.password, 12);
 
-  // 3) Update the user
-  await UserRepository.updateUser(email, {
+  await UserRepository.updateUser(user._id, {
     password: hashedPW,
-    passwordChangedAt: new Date(Date.now()),
-    passwordResetToken: undefined,
-    passwordResetExpires: undefined,
   }).catch((err) => logger.error(err));
 
-  // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  // Log the user in, send JWT
+  createSendToken(user._id, 200, res);
 };

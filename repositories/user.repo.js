@@ -2,8 +2,6 @@ import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
 import User from "../model/user.model.js";
 
-//! constructor yes or no
-
 class UserRepository {
   async createUser(userData) {
     try {
@@ -31,16 +29,11 @@ class UserRepository {
       return new AppError("Could not get the users", 404);
     }
   }
+  
 
   async updateUser(userId, newData) {
     try {
-      //! Would these options cause any potential injection risks?
-      //! addField()
-      return await User.findByIdAndUpdate(userId, newData, {
-        new: true,
-        multi: true,
-        upsert: true,
-      });
+      return await User.findByIdAndUpdate(userId, newData, { new: true });
     } catch (error) {
       logger.error(error);
       return new AppError("Could not update the user", 404);
@@ -59,6 +52,7 @@ class UserRepository {
   async getUserByUsername(username) {
     try {
       return await User.findOne({ username });
+      // return await User.findOne(username);
     } catch (error) {
       logger.error(error);
       return new AppError("Could not get the user", 404);
@@ -75,12 +69,12 @@ class UserRepository {
   }
 
   async getUserForAuth(hashedToken) {
-    return await User.findOne({
-      $and: [
-        { passwordResetToken: hashedToken },
-        { passwordResetExpires: { $gt: new Date(Date.now()) } },
-      ],
-    });
+    try {
+      return await User.findOne({ token: hashedToken });
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user", 404);
+    }
   }
 }
 

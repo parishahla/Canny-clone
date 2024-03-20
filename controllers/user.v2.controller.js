@@ -11,7 +11,7 @@ export const getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
-
+ 
 export const getUser = async (req, res, next) => {
   try {
     const user = await UserRepository.getUserById(req.params.id).catch(
@@ -19,28 +19,41 @@ export const getUser = async (req, res, next) => {
         throw new AppError(err, 404);
       },
     );
-    res.status(200).json(user);
+
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    const { password, ...rest } = user._doc;
+
+    res.status(200).json(rest);
   } catch (error) {
     next(error);
   }
 };
 
 export const createUser = async (req, res, next) => {
-  //* Designed for a future admin user
   try {
-    if (await UserRepository.getUserByEmail(req.body.email)) {
-      throw new AppError("This email has been taken");
+    const payload = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      photo: req.file ? req.file.filename : "default.jpg",
+    };
+
+    if (await UserRepository.getUserByEmail(payload.email)) {
+      return next(new AppError("This email has been taken", 404));
     }
 
-    if (await UserRepository.getUserByUsername(req.body.username)) {
-      throw new AppError("This username has been taken");
+    if (await UserRepository.getUserByUsername(payload.username)) {
+      return next(new AppError("This username has been taken", 404));
     }
 
     const newUser = {
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      photo: req.file ? req.file.filename : "default.jpg",
+      username: payload.username,
+      email: payload.email,
+      password: payload.password,
+      photo: payload.photo,
     };
 
     const result = await UserRepository.createUser(newUser);
@@ -52,25 +65,46 @@ export const createUser = async (req, res, next) => {
   }
 };
 
+//! payload validation for update, isrequired is not included
 export const updateUser = async (req, res, next) => {
   try {
-    if (req.user._id.toString() !== req.params.id.toString())
+    const payload = {
+      userId: req.user._id,
+      parameterId: req.params.id,
+    };
+
+    const updatePayload = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      photo: req.file ? req.file.filename : "default.jpg",
+    };
+
+    if (payload.userId.toString() !== payload.parameterId.toString())
       throw new AppError("You can only update your own account");
 
-    if (await UserRepository.getUserByEmail(req.body.email)) {
-      throw new AppError("This email has been taken");
+    if (
+      updatePayload.email &&
+      (await UserRepository.getUserByEmail(updatePayload.email))
+    ) {
+      return next(new AppError("This email has been taken", 404));
     }
 
-    if (await UserRepository.getUserByUsername(req.body.username)) {
-      throw new AppError("This username has been taken");
+    if (
+      updatePayload.username &&
+      (await UserRepository.getUserByUsername(updatePayload.username))
+    ) {
+      return next(new AppError("This username has been taken", 404));
     }
 
     const updatedUser = await UserRepository.updateUser(
-      req.params.id,
-      req.body,
+      payload.parameterId,
+      updatePayload,
     );
-    // const { password, ...rest } = updatedUser._doc;
-    res.status(200).json(updatedUser);
+
+    const { password, ...rest } = updatedUser._doc;
+    //! Should change password route be on its own?
+    res.status(200).json(rest);
   } catch (error) {
     next(error);
   }
