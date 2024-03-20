@@ -3,3 +3,4 @@ node_modules/
 *.txt
 public/img
 *.log
+*.tmp
