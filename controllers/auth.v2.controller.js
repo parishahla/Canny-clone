@@ -105,7 +105,7 @@ export const protect = async (req, res, next) => {
       logger.info(err.name);
       return next(
         new AppError(
-          "Could not verify your token! Token eitheris invalid or has expired",
+          "Could not verify your token! Token is either invalid or expired",
           404,
         ),
       );
