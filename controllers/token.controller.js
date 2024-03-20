@@ -1,38 +1,41 @@
-import Token from "../module/token";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import TokenRepository from "../repositories/token.repo.js";
+import Token from "../model/token.model.js";
+import logger from "../logger/logger.js";
+import AppError from "../utils/appError.js";
 
-const generateToken = async (id) => {
-  let token = await Token.findOne({ userId: id });
-  // delete already exits token
+export const generateToken = async (id) => {
+  const token = await TokenRepository.findTokenById(id);
+
   if (token) {
-    await Token.deleteOne({ userId: id });
+    await TokenRepository.deleteExistingToken(id);
   }
-  // generate token
+
   const resetToken = crypto.randomBytes(32).toString("hex");
-  //hash reset token
+
   const hashedToken = await bcrypt.hash(resetToken, 10);
-  // save token in database
-  await new Token({
-    userId: id,
-    token: hashedToken,
-    createdAt: Date.now(),
-  }).save();
+
+  TokenRepository.createToken(id, hashedToken);
+
   return resetToken;
 };
-const isValidToken = async ({ token, id }) => {
+export const isValidToken = async (plainToken, id) => {
   try {
-    const savedToken = await Token.findOne({ userId: id }).lean();
-    //compare the token
-    if (savedToken) {
-      const isValidToken = await bcrypt.compare(token, savedToken.token);
-      return isValidToken;
-    } else return false;
-  } catch (er) {
-    console.log("something went wrong...");
+    const user = await TokenRepository.getUserForAuth(id);
+    if (user.length === 0) throw new AppError("Token not found");
+
+    const { token } = user[0];
+
+    if (token) {
+      const isValid = bcrypt.compare(plainToken, token);
+      return isValid;
+    }
+    //!tenary for returning true or false - bcrypt compare is repeated
+    return false;
+  } catch (err) {
+    logger.error(err);
+    logger.info("something went wrong...");
+    throw new AppError("something went wrong...", 404);
   }
-};
-module.exports = {
-  generateToken,
-  isValidToken,
 };
