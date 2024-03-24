@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import TokenRepository from "../repositories/token.repo.js";
-import Token from "../model/token.model.js";
 import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
 

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const feedbackSchema = new mongoose.Schema(
   {
@@ -20,7 +20,7 @@ const feedbackSchema = new mongoose.Schema(
         "A feedback description name must have more (or equal) than 10 characters",
       ],
     },
-    image: {
+    photo: {
       type: String,
       trim: true,
     },
@@ -28,6 +28,11 @@ const feedbackSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "Users",
     },
   },
   { timestamps: true },

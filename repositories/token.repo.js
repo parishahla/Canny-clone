@@ -1,8 +1,8 @@
 import { promisify } from "util";
 import jwt from "jsonwebtoken";
+import Token from "../model/token.model.js";
 import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
-import Token from "../model/token.model.js";
 
 class TokenRepository {
   async findTokenById(id) {
@@ -21,8 +21,8 @@ class TokenRepository {
     }
   }
 
-  async createToken(id, hashedToken) {
-    return await new Token({
+  createToken(id, hashedToken) {
+    return new Token({
       userId: id,
       token: hashedToken,
       createdAt: Date.now(),
@@ -54,6 +54,11 @@ class TokenRepository {
     return Object.values(decoded)[0];
   }
 
+  async decodeSigninToken(token) {
+    // const token = req.headers.authorization.split(" ")[1];
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    return Object.values(decoded)[0];
+  }
 }
 
 export default new TokenRepository();

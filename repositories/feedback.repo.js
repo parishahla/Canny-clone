@@ -26,7 +26,7 @@ class FeedbackRepository {
       return await Feedback.find({});
     } catch (error) {
       logger.error(error);
-      return new AppError("Could not get all the feedback", 404);
+      return new AppError("Could not get any posts", 404);
     }
   }
 
@@ -49,6 +49,32 @@ class FeedbackRepository {
       return new AppError("Could not delete the feedback", 404);
     }
   }
+
+  async getUserByFeedback(feedbackId) {
+    try {
+      const feedback = await Feedback.findOne(feedbackId).catch((err) => {
+        throw new AppError("Could not get the feedback", 404);
+      });
+      console.log("feedback")
+      console.log(feedback)
+
+      if (!feedback) throw new AppError("Could not get the feedback", 404);
+
+      return feedback.userId;
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user", 404);
+    }
+  }
+
+  async showOneUserFeedback(id) {
+    try {
+      return await Feedback.find({ userId: id });
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user", 404);
+    }
+  }
 }
 
-export default FeedbackRepository;
+export default new FeedbackRepository();

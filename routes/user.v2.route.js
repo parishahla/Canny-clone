@@ -13,8 +13,8 @@ import {
   resetPassword,
   protect,
 } from "../controllers/auth.v2.controller.js";
-import validate from "../middlewares/validation.js";
-import schema from "../middlewares/validationSchema.js";
+import validate from "../middlewares/user.joi.validation.js";
+import schema from "../middlewares/user.joi.schema.js";
 import uploadPhoto from "../middlewares/imageUpload.js";
 
 class Router {

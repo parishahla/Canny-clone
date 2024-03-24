@@ -11,7 +11,7 @@ export const getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
- 
+
 export const getUser = async (req, res, next) => {
   try {
     const user = await UserRepository.getUserById(req.params.id).catch(
@@ -110,6 +110,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
+//!payload - refactor authorize user
 export const deleteUser = async (req, res, next) => {
   try {
     if (req.user._id.toString() !== req.params.id.toString())

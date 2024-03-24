@@ -9,11 +9,11 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
-    cb(null, `user-someUserId-${uuidv4()}.${ext}`);
+    cb(null, `user-${uuidv4()}.${ext}`);
   },
 });
 
-// // filter out the ones that are not images
+// // filter out the ones that are not image
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);

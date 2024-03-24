@@ -11,6 +11,7 @@ export default function valiateSignup(schema, signin) {
   };
 }
 
+
 // export default function valiateSignup(schema, signup) {
 //   return (req, res, next) => {
 //     console.log(req.body);

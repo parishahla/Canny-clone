@@ -1,32 +1,32 @@
-import jwt from "jsonwebtoken";
-import { promisify } from "util";
-import { ObjectId } from "mongodb";
+import VoteRepository from "../repositories/vote.repo.js";
+import TokenRepository from "../repositories/token.repo.js";
 import AppError from "../utils/appError.js";
 import logger from "../logger/logger.js";
-import VoteRepository from "../repositories/vote.repo.js";
-
-function getUserId(req) {
-  const token = req.headers.authorization.split(" ")[1];
-  const decoded = promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  return decoded.id;
-}
 
 export const sendUpvote = async (req, res, next) => {
   try {
-    //? Replace the next two lines with getUserId(req), then capture the decoded.id
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const decodedId = await TokenRepository.decodeSigninToken(
+      req.headers.authorization.split(" ")[1],
+    );
 
-    const voted = await VoteRepository.findVote(req.params.id, decoded._id);
+    const payload = {
+      feedbackId: req.params.id,
+      userId: decodedId,
+    };
 
-    //! must be handled differently
+    const voted = await VoteRepository.findVote(
+      payload.feedbackId,
+      payload.userId,
+    );
+
+    //! must be handled differently - the catch error of the promise is not included anywhere
     if (voted) {
-      return next(new AppError("You've already voted before.", 400));
+      return next(new AppError("You have already voted before.", 400));
     }
 
-    const newVote = await VoteRepository.upvote(req.params.id, decoded._id);
-
-    res.status(201).json(newVote);
+    VoteRepository.upvote(payload.feedbackId, payload.userId);
+    //! new vote catch err in the repo, is nowhere to be reflected in here
+    res.status(201).json("Feedback upvoted!");
   } catch (error) {
     logger.error(error);
     next(error);
@@ -35,21 +35,28 @@ export const sendUpvote = async (req, res, next) => {
 
 export const sendDownvote = async (req, res, next) => {
   try {
-    let downvote;
-    //? Replace the next two lines with getUserId(req), then capture the decoded.id
+    const decodedId = await TokenRepository.decodeSigninToken(
+      req.headers.authorization.split(" ")[1],
+    );
 
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const payload = {
+      feedbackId: req.params.id,
+      userId: decodedId,
+    };
 
-    const voted = await VoteRepository.findVote(req.params.id, decoded._id);
-
+    const voted = await VoteRepository.findVote(
+      payload.feedbackId,
+      payload.userId,
+    );
+    console.log(voted);
+    //! it might be the error catched back in the repo !
     if (voted) {
-      downvote = await VoteRepository.downvote(req.params.id, decoded._id);
+      VoteRepository.downvote(payload.feedbackId, payload.userId);
     } else {
-      return next(new AppError("Can't take your vote twice!", 400));
+      return next(new AppError("You can not take your vote twice!", 400));
     }
 
-    res.status(201).json(downvote);
+    res.status(201).json("Feedback downvoted!");
   } catch (error) {
     logger.error(error);
     next(error);

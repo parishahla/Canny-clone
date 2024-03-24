@@ -18,7 +18,7 @@ class App {
 
   setupRoutes() {
     this.app.use("/api/v2/users", routerInstance.getRouter());
-    this.app.use("/api/v2/feedback", feedbackRouterV2);
+    this.app.use("/api/v2/feedback", feedbackRouterV2.getRouter());
   }
 
   requestLogger() {

@@ -166,18 +166,16 @@ export const resetPassword = async (req, res, next) => {
   };
 
   const user = await UserRepository.getUserByEmail(payload.email);
-
+  //! when email is wrong, _id is unddefined. handle it
   const isValid = await isValidToken(payload.token, user._id).catch((err) => {
     logger.info(err);
     throw new AppError("Token expired", 404);
   });
 
   if (!isValid) {
-    res.status(404).json({
-      status: "fail",
-      message: "Token is invalid or has expired",
-    });
-    throw new AppError("Token is invalid or has expired", 404);
+    return next(
+      new AppError("Validation failed! Token is invalid or has expired", 404),
+    );
   }
 
   const hashedPW = await bcrypt.hash(req.body.password, 12);

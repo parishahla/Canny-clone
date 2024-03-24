@@ -10,15 +10,22 @@ class VoteRepository {
   //     ],
   //   })
   async findVote(feedbackId, userId) {
-    const result = Vote.findOne({
-      $and: [{ feedbackId: feedbackId }, { upvotedBy: userId }],
-    });
-    return result;
+    try {
+      //! check if the feedback exists
+      const result = Vote.findOne({
+        $and: [{ feedbackId: feedbackId }, { upvotedBy: userId }],
+      });
+      return result;
+    } catch (error) {
+      logger.error(error);
+      return new AppError("Could not get the user");
+    }
   }
 
   async upvote(feedbackId, userId) {
     try {
-      await Vote.insertOne({
+      //! check if fb exists!
+      Vote.create({
         feedbackId: feedbackId,
         upvotedBy: userId,
       });
@@ -28,9 +35,11 @@ class VoteRepository {
     }
   }
 
-  async downvote(userId) {
+  async downvote(feedbackId, userId) {
     try {
-      return await Vote.findByIdAndDelete(userId);
+      return await Vote.deleteOne({
+        $and: [{ feedbackId: feedbackId }, { upvotedBy: userId }],
+      });
     } catch (error) {
       logger.error(error);
       return new AppError("Could not delete the user", 404);
@@ -38,4 +47,4 @@ class VoteRepository {
   }
 }
 
-export default VoteRepository;
+export default new VoteRepository();
