@@ -153,6 +153,7 @@ export const deleteFeedback = async (req, res, next) => {
     }
     res.status(200).json("Feedback has been deleted!");
   } catch (error) {
+    //! It's not catching line 129 rejection error
     next(error);
   }
 };

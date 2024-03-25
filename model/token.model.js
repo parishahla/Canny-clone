@@ -15,6 +15,7 @@ const tokenSchema = new mongoose.Schema({
     default: new Date(Date.now() + 10 * 60 * 1000),
   },
 });
+//! line 15 - change new Date
 const Token = mongoose.model("Token", tokenSchema);
 
 export default Token;

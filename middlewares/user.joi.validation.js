@@ -11,19 +11,6 @@ export default function valiateSignup(schema, signin) {
   };
 }
 
-
-// export default function valiateSignup(schema, signup) {
-//   return (req, res, next) => {
-//     console.log(req.body);
-//     const { error } = schema.validate(req.body);
-//     if (error) {
-//       res.status(400).json({ error: error.details[0].message });
-//     } else {
-//       next(signup(req, res, next));
-//     }
-//   };
-// }
-
 //*************************************** */
 // This piece of code is supposed to work with api v2.0.0 -
 // import User from "../model/user.model.js";

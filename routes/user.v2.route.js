@@ -30,7 +30,7 @@ class Router {
     this.post("/forgotPassword", forgotPassword);
     this.post("/", protect, validate(this.schema), createUser);
     this.patch("/resetPassword/:token", resetPassword);
-    this.patch("/:id", protect, updateUser);
+    this.patch("/:id", protect, uploadPhoto, updateUser);
     this.get("/", protect, getAllUsers);
     this.get("/:id", protect, getUser);
     this.delete("/:id", protect, deleteUser);

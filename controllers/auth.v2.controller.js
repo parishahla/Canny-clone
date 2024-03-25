@@ -57,8 +57,8 @@ export const signup = async (req, res, next) => {
   }
 };
 
+//!get it from payload
 export const login = async (req, res, next) => {
-  //!get it from payload
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -155,35 +155,41 @@ export const forgotPassword = async (req, res, next) => {
     status: "success",
     message: "Token sent to email!",
   });
-  //! try catch wont work, handle deleting the token diffrently
+  //! try catch wont work, handle deleting the token by promisifying
 };
 
 export const resetPassword = async (req, res, next) => {
-  const payload = {
-    email: req.body.email,
-    password: req.body.password,
-    token: req.params.token,
-  };
+  try {
+    const payload = {
+      email: req.body.email,
+      password: req.body.password,
+      token: req.params.token,
+    };
 
-  const user = await UserRepository.getUserByEmail(payload.email);
-  //! when email is wrong, _id is unddefined. handle it
-  const isValid = await isValidToken(payload.token, user._id).catch((err) => {
-    logger.info(err);
-    throw new AppError("Token expired", 404);
-  });
-
-  if (!isValid) {
-    return next(
-      new AppError("Validation failed! Token is invalid or has expired", 404),
+    const user = await UserRepository.getUserByEmail(payload.email).catch(
+      console.error,
     );
+    console.log(user);
+    const isValid = await isValidToken(payload.token, user._id).catch((err) => {
+      logger.info(err);
+      throw new AppError("Token expired", 404);
+    });
+
+    if (!isValid) {
+      return next(
+        new AppError("Validation failed! Token is invalid or has expired", 404),
+      );
+    }
+
+    const hashedPW = await bcrypt.hash(req.body.password, 12);
+
+    await UserRepository.updateUser(user._id, {
+      password: hashedPW,
+    }).catch((err) => logger.error(err));
+
+    // Log the user in, send JWT
+    createSendToken(user._id, 200, res);
+  } catch (err) {
+    next(err);
   }
-
-  const hashedPW = await bcrypt.hash(req.body.password, 12);
-
-  await UserRepository.updateUser(user._id, {
-    password: hashedPW,
-  }).catch((err) => logger.error(err));
-
-  // Log the user in, send JWT
-  createSendToken(user._id, 200, res);
 };

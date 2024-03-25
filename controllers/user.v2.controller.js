@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import UserRepository from "../repositories/user.repo.js";
 import logger from "../logger/logger.js";
 import AppError from "../utils/appError.js";
@@ -33,6 +34,7 @@ export const getUser = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
+  //* Designed for a future admin user
   try {
     const payload = {
       email: req.body.email,
@@ -65,15 +67,12 @@ export const createUser = async (req, res, next) => {
   }
 };
 
-//! payload validation for update, isrequired is not included
+//! payload validation for update only
 export const updateUser = async (req, res, next) => {
   try {
     const payload = {
       userId: req.user._id,
       parameterId: req.params.id,
-    };
-
-    const updatePayload = {
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
@@ -83,19 +82,25 @@ export const updateUser = async (req, res, next) => {
     if (payload.userId.toString() !== payload.parameterId.toString())
       throw new AppError("You can only update your own account");
 
-    if (
-      updatePayload.email &&
-      (await UserRepository.getUserByEmail(updatePayload.email))
-    ) {
+    if (payload.email && (await UserRepository.getUserByEmail(payload.email))) {
       return next(new AppError("This email has been taken", 404));
     }
 
     if (
-      updatePayload.username &&
-      (await UserRepository.getUserByUsername(updatePayload.username))
+      payload.username &&
+      (await UserRepository.getUserByUsername(payload.username))
     ) {
       return next(new AppError("This username has been taken", 404));
     }
+
+    const hashedPW = await bcrypt.hash(payload.password, 12);
+
+    const updatePayload = {
+      email: payload.email,
+      username: payload.username,
+      password: hashedPW,
+      photo: payload.photo,
+    };
 
     const updatedUser = await UserRepository.updateUser(
       payload.parameterId,
@@ -110,7 +115,7 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-//!payload - refactor authorize user
+//! refactor authorize user
 export const deleteUser = async (req, res, next) => {
   try {
     if (req.user._id.toString() !== req.params.id.toString())

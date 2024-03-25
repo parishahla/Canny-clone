@@ -52,11 +52,10 @@ class FeedbackRepository {
 
   async getUserByFeedback(feedbackId) {
     try {
-      const feedback = await Feedback.findOne(feedbackId).catch((err) => {
+      const feedback = await Feedback.findById(feedbackId).catch((err) => {
+        logger.error(err);
         throw new AppError("Could not get the feedback", 404);
       });
-      console.log("feedback")
-      console.log(feedback)
 
       if (!feedback) throw new AppError("Could not get the feedback", 404);
 
